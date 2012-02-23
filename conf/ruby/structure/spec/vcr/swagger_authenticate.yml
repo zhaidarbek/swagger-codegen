@@ -1,0 +1,156 @@
+---
+- !ruby/struct:VCR::HTTPInteraction
+  request: !ruby/struct:VCR::Request
+    method: :get
+    uri: http://localhost:8001/admin/api/account.json/authenticate/zeke?Password=gomer
+    body: 
+    headers:
+      content-type:
+      - application/json
+      api-key:
+      - b39ee8d5f05d0f566a0080b4c310ceddf5dc5f7606a616f53
+      user-agent:
+      - ruby-4.06.08
+  response: !ruby/struct:VCR::Response
+    status: !ruby/struct:VCR::ResponseStatus
+      code: 403
+      message: Forbidden
+    headers:
+      date:
+      - Tue, 11 Oct 2011 21:04:26 GMT
+      wordnik-api-version:
+      - 4.08.6
+      access-control-allow-origin:
+      - ! '*'
+      content-type:
+      - application/json
+      transfer-encoding:
+      - chunked
+    body: ! '{"message":"Invalid password supplied","type":"error"}'
+    http_version: '1.1'
+- !ruby/struct:VCR::HTTPInteraction
+  request: !ruby/struct:VCR::Request
+    method: :get
+    uri: http://localhost:8001/admin/api/account.json/authenticate/zeke?password=gomer
+    body: 
+    headers:
+      content-type:
+      - application/json
+      api-key:
+      - b39ee8d5f05d0f566a0080b4c310ceddf5dc5f7606a616f53
+      user-agent:
+      - ruby-4.06.08
+  response: !ruby/struct:VCR::Response
+    status: !ruby/struct:VCR::ResponseStatus
+      code: 200
+      message: OK
+    headers:
+      date:
+      - Tue, 11 Oct 2011 21:06:30 GMT
+      wordnik-api-version:
+      - 4.08.6
+      access-control-allow-origin:
+      - ! '*'
+      content-type:
+      - application/json
+      transfer-encoding:
+      - chunked
+    body: ! '{"token":"fd8eb8631293f34b3e4d6a33636117d21998b778c0e93b6","userId":1010037,"userSignature":"79ea28fbc85f00e35ad5a5bc58ddf99b"}'
+    http_version: '1.1'
+- !ruby/struct:VCR::HTTPInteraction
+  request: !ruby/struct:VCR::Request
+    method: :get
+    uri: http://petstore.swagger.wordnik.com:80/api/account.json/authenticate/fumanchu?password=kalamazoo
+    body: 
+    headers:
+      content-type:
+      - application/json
+      api-key:
+      - hello
+      user-agent:
+      - ruby-4.06.08
+  response: !ruby/struct:VCR::Response
+    status: !ruby/struct:VCR::ResponseStatus
+      code: 404
+      message: Not Found
+    headers:
+      date:
+      - Wed, 22 Feb 2012 01:07:13 GMT
+      access-control-allow-origin:
+      - ! '*'
+      content-type:
+      - text/html;charset=ISO-8859-1
+      cache-control:
+      - must-revalidate,no-cache,no-store
+      x-cache:
+      - MISS from 172.19.134.2
+      x-cache-lookup:
+      - MISS from 172.19.134.2:3128
+      via:
+      - 1.0 172.19.134.2:3128 (squid/2.6.STABLE14)
+      content-length:
+      - '1622'
+    body: ! "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n<html
+      xml:lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\"><head>\n<meta
+      http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\">\n<title>Gogo
+      Inflight Internet</title>\n<style type=\"text/css\">\nbody, div, a, img, h1,
+      p {\n\tmargin:0;\n\tpadding:0;\n\tborder:none;\n}\nbody {\n\tfont-family:Helvetica,Arial,
+      sans-serif;\n\tfont-size:12px;\n\tcolor:#58595b;\n\tbackground:#fff;\n}\n#wrap
+      {\n\twidth:600px;\n\tmargin:5% auto;\n}\n#brand {\n\ttext-align:center;\n}\n.align_center
+      {\n\ttext-align:center;\n}\nh1 {\n\tfont-size:15px;\n\tmargin:25px auto;\n}\n#primary
+      p {\n\tfont-size:12px;\n\tline-height:20px;\n}\n</style>\n</head>\n\n<body>\n<div
+      id=\"wrap\">\n\t<div id=\"header\">\n\t\t<div id=\"brand\">\n        \t<a href=\"\"><img
+      id=\"logo\" src=\"/abp/images/Gogo_Tag_5C_RGB_148x100.png\" width=\"148\" height=\"100\"
+      border=\"0\" alt=\"Gogo\" /></a>\n        </div><!-- /brand -->\n\t</div><!--
+      /header -->\n\n\t<div id=\"primary\" class=\"align_center\">\n        <h1>Rats.
+      This page is currently unavailable.</h1>\n        <p>We feel terrible, but the
+      web page you are attempting to access is currently unavailable. This may be
+      due to issues with the website you are trying to visit, or the airplane is outside
+      the coverage area. Coverage is available within the continental U.S. while the
+      airplane is above 10,000 feet. Please try again in a minute or so, and keep
+      your fingers crossed. We feel your pain.</p>\n\t</div><!-- /primary -->\n\n
+      \   <div id=\"secondary\"></div><!-- /secondary -->\n\n\t<div id=\"footer\"></div><!--
+      /footer -->\n</div><!-- /wrap -->\n</body>\n</html>"
+    http_version: '1.1'
+- !ruby/struct:VCR::HTTPInteraction
+  request: !ruby/struct:VCR::Request
+    method: :get
+    uri: http://petstore.swagger.wordnik.com:80/api/account.json/authenticate/zeke?password=goober
+    body: 
+    headers:
+      content-type:
+      - application/json
+      api-key:
+      - b39ee8d5f05d0f566a0080b4c310ceddf5dc5f7606a616f53
+      user-agent:
+      - ruby-4.06.08
+  response: !ruby/struct:VCR::Response
+    status: !ruby/struct:VCR::ResponseStatus
+      code: 404
+      message: Not Found
+    headers:
+      date:
+      - Wed, 22 Feb 2012 01:09:19 GMT
+      access-control-allow-origin:
+      - ! '*'
+      content-type:
+      - text/html;charset=ISO-8859-1
+      cache-control:
+      - must-revalidate,no-cache,no-store
+      content-length:
+      - '1399'
+    body: ! "<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html;
+      charset=ISO-8859-1\"/>\n<title>Error 404 Not Found</title>\n</head>\n<body><h2>HTTP
+      ERROR 404</h2>\n<p>Problem accessing /api/account.json/authenticate/zeke. Reason:\n<pre>
+      \   Not Found</pre></p><hr /><i><small>Powered by Jetty://</small></i><br/>
+      \                                               \n<br/>                                                \n<br/>
+      \                                               \n<br/>                                                \n<br/>
+      \                                               \n<br/>                                                \n<br/>
+      \                                               \n<br/>                                                \n<br/>
+      \                                               \n<br/>                                                \n<br/>
+      \                                               \n<br/>                                                \n<br/>
+      \                                               \n<br/>                                                \n<br/>
+      \                                               \n<br/>                                                \n<br/>
+      \                                               \n<br/>                                                \n<br/>
+      \                                               \n<br/>                                                \n\n</body>\n</html>\n"
+    http_version: '1.1'

@@ -1,0 +1,56 @@
+---
+- !ruby/struct:VCR::HTTPInteraction
+  request: !ruby/struct:VCR::Request
+    method: :get
+    uri: http://localhost:8001/admin/api/word.xml
+    body: 
+    headers: 
+  response: !ruby/struct:VCR::Response
+    status: !ruby/struct:VCR::ResponseStatus
+      code: 0
+      message: 
+    headers: 
+    body: 
+    http_version: '1.1'
+- !ruby/struct:VCR::HTTPInteraction
+  request: !ruby/struct:VCR::Request
+    method: :get
+    uri: http://petstore.swagger.wordnik.com:80/api/pet.xml
+    body: 
+    headers: 
+  response: !ruby/struct:VCR::Response
+    status: !ruby/struct:VCR::ResponseStatus
+      code: 200
+      message: OK
+    headers:
+      date:
+      - Wed, 22 Feb 2012 04:25:23 GMT
+      access-control-allow-origin:
+      - ! '*'
+      content-type:
+      - application/xml
+      content-length:
+      - '4471'
+    body: <?xml version="1.0" encoding="UTF-8" standalone="yes"?><ApiDocumentation><apiVersion>0.1</apiVersion><apis><description>Operations
+      about pets</description><operations><errorResponses><code>400</code><reason>Invalid
+      ID supplied</reason></errorResponses><errorResponses><code>404</code><reason>Pet
+      not found</reason></errorResponses><httpMethod>GET</httpMethod><nickname>getPetById</nickname><notes>Returns
+      a pet when ID &lt; 10. ID &gt; 10 or nonintegers will simulate API error conditions</notes><parameters><allowMultiple>false</allowMultiple><allowableValues
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="documentationAllowableRangeValues"><max>10.0</max><min>0.0</min><valueType>RANGE</valueType></allowableValues><dataType>string</dataType><description>ID
+      of pet that needs to be fetched</description><name>petId</name><paramType>path</paramType><required>true</required></parameters><responseClass>pet</responseClass><summary>Find
+      pet by ID</summary></operations><path>/pet.{format}/{petId}</path></apis><apis><description>Operations
+      about pets</description><operations><errorResponses><code>400</code><reason>Invalid
+      status value</reason></errorResponses><httpMethod>GET</httpMethod><nickname>findPetsByStatus</nickname><notes>Multiple
+      status values can be provided with comma seperated strings</notes><parameters><allowMultiple>true</allowMultiple><allowableValues
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="documentationAllowableListValues"><valueType>LIST</valueType><values>available</values><values>pending</values><values>sold</values></allowableValues><dataType>string</dataType><defaultValue>available</defaultValue><description>Status
+      values that need to be considered for filter</description><name>status</name><paramType>query</paramType><required>true</required></parameters><responseClass>List[pet]</responseClass><summary>Finds
+      Pets by status</summary></operations><path>/pet.{format}/findByStatus</path></apis><apis><description>Operations
+      about pets</description><operations><deprecated>true</deprecated><errorResponses><code>400</code><reason>Invalid
+      tag value</reason></errorResponses><httpMethod>GET</httpMethod><nickname>findPetsByTags</nickname><notes>Muliple
+      tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for
+      testing.</notes><parameters><allowMultiple>true</allowMultiple><dataType>string</dataType><description>Tags
+      to filter by</description><name>tags</name><paramType>query</paramType><required>true</required></parameters><responseClass>List[pet]</responseClass><summary>Finds
+      Pets by tags</summary></operations><path>/pet.{format}/findByTags</path></apis><basePath>http://petstore.swagger.wordnik.com/api</basePath><models><fields><allowMultiple>false</allowMultiple><name>name</name><paramType>string</paramType><required>false</required></fields><fields><allowMultiple>false</allowMultiple><name>id</name><paramType>long</paramType><required>false</required></fields><fields><allowMultiple>false</allowMultiple><allowableValues
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="documentationAllowableListValues"><valueType>LIST</valueType><values>available</values><values>pending</values><values>sold</values></allowableValues><description>pet
+      status in the store</description><name>status</name><paramType>string</paramType><required>false</required></fields><fields><allowMultiple>false</allowMultiple><name>category</name><paramType>category</paramType><required>false</required></fields><fields><allowMultiple>false</allowMultiple><name>photoUrls</name><paramType>List[string]</paramType><required>false</required></fields><fields><allowMultiple>false</allowMultiple><name>tags</name><paramType>List[tag]</paramType><required>false</required></fields><name>pet</name></models><models><fields><allowMultiple>false</allowMultiple><name>name</name><paramType>string</paramType><required>false</required></fields><fields><allowMultiple>false</allowMultiple><name>id</name><paramType>long</paramType><required>false</required></fields><name>category</name></models><models><fields><allowMultiple>false</allowMultiple><name>name</name><paramType>string</paramType><required>false</required></fields><fields><allowMultiple>false</allowMultiple><name>id</name><paramType>long</paramType><required>false</required></fields><name>tag</name></models><resourcePath>/pet</resourcePath><models/><swaggerVersion>1.1-SHAPSHOT.121026</swaggerVersion></ApiDocumentation>
+    http_version: '1.1'

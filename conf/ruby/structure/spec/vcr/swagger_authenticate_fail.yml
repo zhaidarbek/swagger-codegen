@@ -1,0 +1,76 @@
+---
+- !ruby/struct:VCR::HTTPInteraction
+  request: !ruby/struct:VCR::Request
+    method: :get
+    uri: http://beta.swagger.com:80/v4/account.json/authenticate/zeke?Password=wrong!
+    body: !!null 
+    headers:
+      content-type:
+      - application/json
+      api-key:
+      - b39ee8d5f05d0f566a0080b4c310ceddf5dc5f7606a616f53
+      user-agent:
+      - ruby-4.06.08
+  response: !ruby/struct:VCR::Response
+    status: !ruby/struct:VCR::ResponseStatus
+      code: 302
+      message: Moved Temporarily
+    headers:
+      content-length:
+      - '0'
+      location:
+      - /v4/account.json/authenticate/zeke?Password=wrong%21?5da0d080
+    body: !!null 
+    http_version: '1.1'
+- !ruby/struct:VCR::HTTPInteraction
+  request: !ruby/struct:VCR::Request
+    method: :get
+    uri: http://beta.swagger.com:80/v4/account.json/authenticate/zeke?password=wrong!
+    body: !!null 
+    headers:
+      content-type:
+      - application/json
+      api-key:
+      - b39ee8d5f05d0f566a0080b4c310ceddf5dc5f7606a616f53
+      user-agent:
+      - ruby-4.06.08
+  response: !ruby/struct:VCR::Response
+    status: !ruby/struct:VCR::ResponseStatus
+      code: 302
+      message: Moved Temporarily
+    headers:
+      content-length:
+      - '0'
+      location:
+      - /v4/account.json/authenticate/zeke?password=wrong%21?fa98fb60
+    body: !!null 
+    http_version: '1.1'
+- !ruby/struct:VCR::HTTPInteraction
+  request: !ruby/struct:VCR::Request
+    method: :get
+    uri: http://beta.swagger.com:80/v4/account.json/authenticate/fumanchu?password=wrong!
+    body: !!null 
+    headers:
+      content-type:
+      - application/json
+      api-key:
+      - hello
+      user-agent:
+      - ruby-4.06.08
+  response: !ruby/struct:VCR::Response
+    status: !ruby/struct:VCR::ResponseStatus
+      code: 200
+      message: OK
+    headers:
+      server:
+      - Sun-ONE-Web-Server/6.1
+      date:
+      - Wed, 22 Feb 2012 16:28:55 GMT
+      content-type:
+      - text/html
+      transfer-encoding:
+      - chunked
+    body: <html><head><title>SWAGGER.COM</title><meta name="keywords" content=""</head><frameset
+      rows="100%", *" border="0" frameborder="0"><frame src="http://swagger.texeme.com//v4/account.json/authenticate/fumanchu?password=wrong%21"
+      name="SWAGGER.COM"></frameset></html>
+    http_version: '1.1'

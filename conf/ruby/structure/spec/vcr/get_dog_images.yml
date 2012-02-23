@@ -1,0 +1,22 @@
+---
+- !ruby/struct:VCR::HTTPInteraction
+  request: !ruby/struct:VCR::Request
+    method: :get
+    uri: http://api.wordnik.com:80/v4/word.json/dog/images/flickr
+    body: 
+    headers: 
+  response: !ruby/struct:VCR::Response
+    status: !ruby/struct:VCR::ResponseStatus
+      code: 401
+      message: Unauthorized
+    headers:
+      date:
+      - Wed, 22 Feb 2012 04:05:44 GMT
+      content-type:
+      - application/json
+      content-length:
+      - '44'
+      vary:
+      - Accept-Encoding,User-Agent
+    body: ! '{"message": "unauthorized", "type": "error"}'
+    http_version: '1.1'
