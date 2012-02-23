@@ -177,7 +177,6 @@ public class EndpointOperation {
 			 * 5. For DELETE add delete
 			 * 6. For GET add get
 			 * 7. Concatenate rest of the path with init caps
-			 * 8. 
 			 */
 
 			String inputobjectName = nameGenerator.getInputObjectName(resource.generateClassName(nameGenerator), endPoint.getPath());
@@ -341,7 +340,7 @@ public class EndpointOperation {
 			method.setMethodType(this.getHttpMethod());
 			
 			//get return value
-			String returnType = dataTypeMapper.getClassType(responseClass, false);
+			String returnType = dataTypeMapper.getClassType(getResponseClass(), false);
 			if("".equals(returnType)){
 				method.setHasResponseValue(false);
 			}
@@ -349,19 +348,20 @@ public class EndpointOperation {
 				method.setHasResponseValue(true);
 			}
             //set the original response name, this is used in identifying if the respone is single valued or multi valued
-            method.setReturnValueFromOperationJson(responseClass);
-			method.setReturnValue(dataTypeMapper.getClassType(responseClass, false));
-			method.setReturnClassName(dataTypeMapper.getGenericType(responseClass));
+            method.setReturnValueFromOperationJson(getResponseClass());
+			method.setReturnValue(dataTypeMapper.getClassType(getResponseClass(), false));
+			method.setReturnClassName(dataTypeMapper.getGenericType(getResponseClass()));
+			System.out.println("return class name: " + method.getReturnClassName());
 
             //if this is a list return type
-            if(method.getReturnClassName().equals(dataTypeMapper.getListReturnTypeSignature(responseClass))){
+            if(method.getReturnClassName().equals(dataTypeMapper.getListReturnTypeSignature(getResponseClass()))){
                 String returnValueTypeName = method.getReturnValue();
                 Model listWrapperModel = new Model();
                 listWrapperModel.setName(nameGenerator.getListWrapperName(returnValueTypeName));
                 List<ModelField> fields = new ArrayList<ModelField>();
                 ModelField aModelField = new ModelField();
                 aModelField.setName(nameGenerator.applyMethodNamingPolicy(returnValueTypeName));
-                aModelField.setParamType(responseClass);
+                aModelField.setParamType(getResponseClass());
                 fields.add(aModelField);
                 listWrapperModel.setFields(fields);
                 method.setListWrapperModel(listWrapperModel);

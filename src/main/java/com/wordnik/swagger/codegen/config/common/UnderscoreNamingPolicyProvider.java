@@ -99,7 +99,7 @@ public class UnderscoreNamingPolicyProvider implements NamingPolicyProvider {
                  }
              }
          }
-         return className + "_api";
+         return Character.toUpperCase(className.charAt(0)) + className.substring(1) + "_api";
     }
 
     /**

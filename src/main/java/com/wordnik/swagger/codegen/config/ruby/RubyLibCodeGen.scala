@@ -82,7 +82,7 @@ class RubyLibCodeGen (
     config.setStructureLocation("conf/ruby/structure");
     config.setExceptionPackageName("com.wordnik.swagger.exception");
     config.setAnnotationPackageName("com.wordnik.swagger.annotations");
-    
+    config.setModelEnumRequired(false);
     config.setOutputDirectory(classOutputDir, "models", "resources");
 
     //create ouput directories

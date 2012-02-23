@@ -97,7 +97,7 @@ public class Endpoint {
                         endPointMethodNames.add(newMethod.getName());
 					}else{
                         System.out.println("Method not generated for resource " + resource.getResourcePath() + " and method " +
-                                operation.getNickname() + " because of un-available model objects specified in the post " );
+                                operation.getNickname() + " because of unavailable model objects specified in the post " );
                     }
 				}
 			}
@@ -131,6 +131,7 @@ public class Endpoint {
             if (modelField.getParamType().equalsIgnoreCase(EndpointOperation.PARAM_TYPE_BODY) ){
                 isParamSetAvailable = false;
                 for(Model model : resource.getModels()){
+                	System.out.println("... checking against model " + model.getGenratedClassName());
                     if(modelField.getValueTypeInternal() != null) {
                         if(dataTypeMapper.isPrimitiveType(modelField.getValueTypeInternal())){
                             isParamSetAvailable = true;
@@ -152,6 +153,8 @@ public class Endpoint {
                     }
                 }
                 if(!isParamSetAvailable){
+                	System.out.println("couldn't find model " + modelField.getValueTypeInternal() + ", " +
+                			modelField.getName());
                     return false;
                 }
             }

@@ -210,7 +210,10 @@ class RubyDataTypeMappingProvider extends DataTypeMappingProvider {
           RubyDataTypeMappingProvider.primitiveValueMap(input)
         }
       }
-      case _ => nameGenerator.applyClassNamingPolicy(input)
+      case _ => {
+        val output = nameGenerator.applyClassNamingPolicy(input)
+        Character.toUpperCase(output.charAt(0)) + output.substring(1)
+      }
     }
   }
 }

@@ -32,14 +32,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * User: ramesh
- * Date: 3/30/11
- * Time: 6:59 PM
- */
 public class LibraryCodeGenerator {
 	private static String VERSION_OBJECT_TEMPLATE = "VersionChecker";
 	private static String MODEL_OBJECT_TEMPLATE = "ModelObject";
@@ -153,7 +150,7 @@ public class LibraryCodeGenerator {
     }
 
     /**
-     * Generates model classes. If the class is already generated then ignores the same.
+     * Generates model classes. If the class is already generated then ignores them.
      */
     private void generateModelClasses(List<Resource> resources, StringTemplateGroup templateGroup) {
     	List<String> generatedClassNames = new ArrayList();
@@ -162,11 +159,16 @@ public class LibraryCodeGenerator {
     		for(Model model : resource.getModels()){
     			if(!generatedClassNames.contains(model.getName()) && !this.getCodeGenRulesProvider().isModelIgnored(model.getName())){
     				List<String> imports = new ArrayList<String>();
+    				List<AttributeMapping> attributeMappings = new ArrayList<AttributeMapping>();
     				imports.addAll(this.config.getDefaultModelImports());
                     if(null == model.getFields() || model.getFields().size() == 0){
                         logger.warn("Model " + model.getName() + " doesn't have any properties");
                     } else {
                         for(ModelField param : model.getFields()){
+    						AttributeMapping m = new AttributeMapping();
+    						m.setKey(param.getName());
+    						m.setValue(nameGenerator.applyClassNamingPolicy(param.getName()));
+    						attributeMappings.add(m);
                             for(String importDef : param.getFieldDefinition(this.getDataTypeMappingProvider(), config, nameGenerator).getImportDefinitions()){
                                 if(!imports.contains(importDef)){
                                     imports.add(importDef);
@@ -175,6 +177,7 @@ public class LibraryCodeGenerator {
                         }
                         StringTemplate template = templateGroup.getInstanceOf(MODEL_OBJECT_TEMPLATE);
                         template.setAttribute("model", model);
+    		    		template.setAttribute("attributeMapping", attributeMappings);
                         template.setAttribute("fields", model.getFields());
                         template.setAttribute("imports", imports);
                         template.setAttribute("annotationPackageName", languageConfig.getAnnotationPackageName());
