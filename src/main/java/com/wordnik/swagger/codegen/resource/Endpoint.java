@@ -131,7 +131,6 @@ public class Endpoint {
             if (modelField.getParamType().equalsIgnoreCase(EndpointOperation.PARAM_TYPE_BODY) ){
                 isParamSetAvailable = false;
                 for(Model model : resource.getModels()){
-                	System.out.println("... checking against model " + model.getGenratedClassName());
                     if(modelField.getValueTypeInternal() != null) {
                         if(dataTypeMapper.isPrimitiveType(modelField.getValueTypeInternal())){
                             isParamSetAvailable = true;
