@@ -1,21 +1,37 @@
+require_relative "../lib/monkey"
+
 class $className$Model
-  attr_accessor $fields:{ field | :$field.fieldDefinition.name$};separator=", "$
-$fields:{ field |
-  $if(field.required)$  validate_presence_of :$field.fieldDefinition.name$$endif$
-}$
+  # properly structured attribute names from codegen
+  attr_accessor $attributeMapping:{m | :$m.value$};separator=", "$
 
-  # TODO: move this to base class
+  # :internal => :external
+  def self.attribute_map
+    {
+$attributeMapping:{m |        :$m.value$ => :$m.key$};separator=",\r"$
+    }
+  end
+
+
   def initialize(attributes = {})
-    attributes.symbolize_and_underscore_keys!
+    # Morph attribute keys into undescored rubyish style
+    $className$Model.attribute_map.each_pair do |internal, external|
+      if attributes.has_key? external
+        attributes[internal] = attributes.delete(external)
+      end
+    end
 
-    # loop over incoming attributes, only assign to valid attr_accessor props
-$fields:{ field |
-    if(UserModel.respond_to? :$field.fieldDefinition.name$) self.$field.fieldDefinition.name$ = attributes[:$field.fieldDefinition.name$]
-}$
+    # Assign attributes
+    attributes.each do |name, value|
+      send("#{name}=", value) if self.respond_to?(name.to_sym)
+    end
+  end
 
-#  	if(UserModel.respond_to? :word) self.word = attributes[:word]
-#   Zap any whitespace and bad encoding
-#   attributes[:name] &&= attributes[:name].strip.squeeze(' ').force_encoding('UTF-8')
-#   super(attributes)
+  def to_body
+    body = {}
+    $className$Model.attribute_map.each_pair do |key,value|
+      body[value] = self.send(key) unless self.send(key).nil?
+    end
+    body
   end
 end
+

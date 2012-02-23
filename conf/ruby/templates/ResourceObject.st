@@ -1,47 +1,54 @@
-module $resource$
+class $resource$
 
 $methods:{ method |
-  def $method.name$(opts={})
-$if(method.pathParameters)$    requiredKeys=[:$method.pathParameters:{ param | $param.name$};separator=", "$]$endif$
-$if(method.queryParameters)$    queryparamKeys=[:$method.queryParameters:{ param | $param.name$};separator=", "$]$endif$
+  def self.$method.name$($if(method.postObject)$body,$endif$ $if(method.pathParameters)$$method.pathParameters:{ param | $param.name$};separator=", "$, $endif$opts={})
+$if(method.queryParameters)$    query_param_keys=[$method.queryParameters:{ param | :$param.name$};separator=", "$]$endif$
 
-$if(method.pathParameters)$
-    #check required options
-    requiredKeys.each do |key|
-      raise "#{key} is required" unless options.has_key?(key) 
-    end
-$endif$
-
+    # verify existence of params
+    $if(method.pathParameters)$$method.pathParameters:{ param | raise "#{$param.name$} is required" if $param.name$.nil?};separator=", "$$endif$
 
     # set default values and merge with input
+    # todo: do we know the types?
     options = {
-$if(method.arguments)$$method.arguments:{ param | $if(param.defaultValue)$      :$param.name$="$param.defaultValue$"$endif$}$$endif$
+$if(method.arguments)$
+ $method.arguments:{arg | $if(arg.defaultValue)$     $arg.name$: "$arg.defaultValue$",$\r$$endif$}$
+$endif$
     }.merge(opts)
   
     #resource path
-    path = "$method.resourcePath$".sub('{format}', '.json')
+    path = "$method.resourcePath$".sub('.{format}', '.json')
   
 $if(method.pathParameters)$
     # sub pathparams
 $method.pathParameters:{ param |
-    path.sub!('{$param.name$}', URI.encode(options[:$param.name$]))
+    path.sub!('{$param.name$}', URI.encode($param.name$.to_s))
 }$$endif$
     #pull querystring keys from options
     queryopts = options.select do |key,value|
-      queryparamKeys.include? key
+      query_param_keys.include? key
     end
 
 $if(method.hasResponseValue)$
-    results = Swagger::request.new(:get, path, queryopts, nil)
+    # hasResponseValue
+    response = Swagger::Request.new(:get, path, {:params=>queryopts,:headers=>nil, :body=>nil}).make
 $if(method.returnValueList)$
-    output = results.map {|result| $method.returnValue$.new(result)}
+    response.map {|result| $method.returnClassName$Model.new(result)}
 $else$
-    output = $method.returnValue$.new(result)
+    $method.returnClassName$Model.new(response.body)
 $endif$
 $else$
-    Swagger::request.new(:get, path, queryopts, nil)
+  $if(method.postObject)$
+    if not body.nil?
+      body=body.to_body
+    end
+
+    Swagger::Request.new(:post, path, {:params=>queryopts,:headers=>nil, :body=>body})
+  $else$
+    Swagger::Request.new(:get, path, {:params=>queryopts,:headers=>nil, :body=>nil})
+  $endif$
 $endif$
 
   end
 
 }$
+end
