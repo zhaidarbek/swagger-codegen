@@ -351,7 +351,6 @@ public class EndpointOperation {
             method.setReturnValueFromOperationJson(getResponseClass());
 			method.setReturnValue(dataTypeMapper.getClassType(getResponseClass(), false));
 			method.setReturnClassName(dataTypeMapper.getGenericType(getResponseClass()));
-			System.out.println("return class name: " + method.getReturnClassName());
 
             //if this is a list return type
             if(method.getReturnClassName().equals(dataTypeMapper.getListReturnTypeSignature(getResponseClass()))){
