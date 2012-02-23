@@ -1,5 +1,6 @@
 # Swagger Client Code-Generator
 
+
 ## Overview
 This is a project to build the Swagger code-gen library which can be used to automatically
 generate client libraries from a Swagger-compliant server.  It also contains a testing
