@@ -9,3 +9,4 @@ version.properties
 lib/*
 build/*
 generated-files/*
+client
