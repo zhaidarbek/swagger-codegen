@@ -43,6 +43,7 @@ public class ModelField {
     private String internalDescription;
     private String paramAccess;
     private String valueTypeInternal;
+    private String genericType;
     private FieldDefinition fieldDefinition;
 
     Logger logger = LoggerFactory.getLogger(ModelField.class);
@@ -153,6 +154,23 @@ public class ModelField {
 
     public void setValueTypeInternal(String valueTypeInternal) {
         this.valueTypeInternal = valueTypeInternal;
+    }
+
+    public String getGenericType() {
+        if(genericType == null){
+            if(dataType.startsWith("List[")){
+                genericType = dataType.substring(5, dataType.length()-1);
+            } else if(dataType.startsWith("Set[")){
+                genericType = dataType.substring(4, dataType.length()-1);
+            } else if(dataType.startsWith("Array[")){
+                genericType = dataType.substring(6, dataType.length()-1);
+            } else if(dataType.startsWith("Map[")){
+                genericType = dataType.substring(4, dataType.length()-1);
+            } else {
+                genericType = dataType;
+            }
+        }
+        return genericType;
     }
 
 
