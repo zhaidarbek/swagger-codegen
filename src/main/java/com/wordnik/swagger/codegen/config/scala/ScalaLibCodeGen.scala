@@ -87,7 +87,7 @@ class ScalaLibCodeGen(
     FileUtil.clearFolder(config.getResourceClassLocation());
     FileUtil.clearFolder(config.getLibraryHome() + "/src/main/java/com/wordnik/swagger/runtime");
     FileUtil.createOutputDirectories(config.getLibraryHome() + "/src/main/java/com/wordnik/swagger/runtime", "java");
-    FileUtil.copyDirectory(new File("src/main/java/com/wordnik/swagger/runtime"), new File(config.getLibraryHome() + "/src/main/java/com/wordnik/swagger/runtime"));
+    FileUtil.copyDirectoryFromUrl(this.getClass.getClassLoader.getResource("conf/scala/structure/src/main/java"), new File(config.getLibraryHome() + "/src/main/java"));
     config
   }
 }
