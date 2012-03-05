@@ -13,7 +13,7 @@ $attributeMapping:{m |        :$m.value$ => :$m.key$};separator=",\r"$
 
 
   def initialize(attributes = {})
-    # Morph attribute keys into undescored rubyish style
+    # Morph attribute keys into underscored rubyish style
     $className$Model.attribute_map.each_pair do |internal, external|
       if attributes.has_key? external
         attributes[internal] = attributes.delete(external)

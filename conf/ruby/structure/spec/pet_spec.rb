@@ -53,7 +53,6 @@ describe "Pet" do
 
 end
 
-
 describe "Store" do
   describe "call store" do
     Swagger.configuration.api_key = 'special-key'
