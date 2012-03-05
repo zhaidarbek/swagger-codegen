@@ -51,29 +51,35 @@ for example:
 ```
 
 ### Other languages
+
 #### scala
 ```bash
-./bin/generate-scala-lib.sh http://petstore.swagger.wordnik.com/api "" "client" "generated-files"
+./bin/generate-scala-lib.sh http://petstore.swagger.wordnik.com/api "" client generated-files
 ```
 
-#### javascript
+#### Ruby
 ```bash
-./bin/generate-js-lib.sh http://petstore.swagger.wordnik.com/api "" "" "generated-files"
+./bin/generate-ruby-lib.sh http://petstore.swagger.wordnik.com/api special-key com.wordnik client
 ```
 
-#### actionscript
+#### Javascript
 ```bash
-./bin/generate-as3-lib.sh http://petstore.swagger.wordnik.com/api "" "client" "generated-files"
+./bin/generate-js-lib.sh http://petstore.swagger.wordnik.com/api "" "" generated-files
+```
+
+#### Actionscript
+```bash
+./bin/generate-as3-lib.sh http://petstore.swagger.wordnik.com/api "" client generated-files
 ```
 
 #### PHP
 ```bash
-./bin/generate-php-lib.sh http://petstore.swagger.wordnik.com/api "" "client" "generated-files"
+./bin/generate-php-lib.sh http://petstore.swagger.wordnik.com/api "" client generated-files
 ```
 
 #### Python
 ```bash
-./bin/generate-python-lib.sh http://petstore.swagger.wordnik.com/api "" "client" "generated-files"
+./bin/generate-python-lib.sh http://petstore.swagger.wordnik.com/api "" client generated-files
 ```
 
 The main class for the generator is at `src/main/java/com/wordnik/swagger/codegen/config/java/JavaLibCodeGen.java`
@@ -81,8 +87,6 @@ The main class for the generator is at `src/main/java/com/wordnik/swagger/codege
 The code-gen uses the 
 [antlr string template library](http://www.stringtemplate.org)
 for generating the output files.
-
-The Wordnik team is working on generating libraries for Ruby, ActionScript 3, Android, PHP and JavaScript, which will be open-sourced in the coming weeks.
 
 ### The Swagger client test framework
 
