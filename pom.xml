@@ -24,11 +24,6 @@
     </pluginRepositories>
 
     <build>
-        <!-- resources>
-            <resource>
-                <directory>conf</directory>
-            </resource>
-        </resources -->
         <plugins>
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>

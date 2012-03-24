@@ -96,10 +96,7 @@ public class SwaggerResourceDocReader {
 
         //make connection to resource and get the documentation
         for (String resourceURL : resourceURLs) {
-            resourceURL = resourceURL + "?api_key=" + apiKey;
-            WebResource aResource = apiClient.resource(resourceURL);
-            aResource.header("api_key", apiKey);
-            ClientResponse clientResponse =  aResource.header("api_key", apiKey).get(ClientResponse.class);
+            ClientResponse clientResponse = buildClientResponse(apiClient, resourceURL);
             String response = clientResponse.getEntity(String.class);
             try {
                 ObjectMapper mapper = new ObjectMapper();
@@ -113,6 +110,21 @@ public class SwaggerResourceDocReader {
         }
         return resourceDocs;
 
+    }
+
+    private ClientResponse buildClientResponse(Client apiClient, String url) {
+        if(null != apiKey && apiKey.length() > 0){
+            url = url + "?api_key="+ apiKey;
+        }
+        WebResource aResource = apiClient.resource(url);
+        ClientResponse clientResponse = null;
+        if(null != apiKey && apiKey.length() > 0){
+            aResource.header("api_key", apiKey);
+            clientResponse =  aResource.header("api_key", apiKey).get(ClientResponse.class);
+        }else{
+            clientResponse =  aResource.get(ClientResponse.class);
+        }
+        return clientResponse;
     }
 
     private String trimResourceName(String resource) {
@@ -134,10 +146,8 @@ public class SwaggerResourceDocReader {
         }else{
             apiResourceUrl = trimResourceName( apiListResource);
         }
-        apiResourceUrl = apiResourceUrl + "?api_key="+ apiKey;
-        WebResource aResource = apiClient.resource(apiResourceUrl);
-        aResource.header("api_key", apiKey);
-        ClientResponse clientResponse =  aResource.header("api_key", apiKey).get(ClientResponse.class);
+
+        ClientResponse clientResponse = buildClientResponse(apiClient, apiResourceUrl);
         String response = clientResponse.getEntity(String.class);
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -149,6 +159,7 @@ public class SwaggerResourceDocReader {
             }
         }
         catch (IOException ex) {
+            ex.printStackTrace();
             throw new CodeGenerationException("Error in coverting resource listing json documentation to java object");
 
         }
