@@ -208,7 +208,7 @@ public class ResourceMethod {
 	}
 	
 	public boolean isReturnValueList() {
-		if(this.getReturnValueFromOperationJson().startsWith("List")){
+		if(this.getReturnValueFromOperationJson().startsWith("List[")){
 			return true;
 		}
 		return false;

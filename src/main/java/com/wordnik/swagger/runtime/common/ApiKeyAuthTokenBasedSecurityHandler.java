@@ -59,8 +59,8 @@ public class ApiKeyAuthTokenBasedSecurityHandler implements SecurityHandler {
      * @param resourceURL
      * @param headers
      */
-    public void populateSecurityInfo(String resourceURL, Map<String, String> httpHeaders) {
-        resourceURL = resourceURL + "api_key="+apiKey;
+    public void populateSecurityInfo(StringBuilder resourceURL, Map<String, String> httpHeaders) {
+        resourceURL.append("api_key=").append(apiKey);
         httpHeaders.put("api_key", apiKey);
         httpHeaders.put("auth_token", authToken);
     }

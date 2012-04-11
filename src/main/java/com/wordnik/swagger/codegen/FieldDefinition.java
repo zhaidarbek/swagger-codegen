@@ -80,7 +80,7 @@ public class FieldDefinition {
 	}
 	
 	public void setReturnType(String returnType) {
-		if(returnType.startsWith("List")){
+		if(returnType.startsWith("List[")){
 		    hasListResponse = true;
 		}else if(returnType.startsWith("Set")){
 			hasSetResponse = true;

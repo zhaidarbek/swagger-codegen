@@ -265,9 +265,7 @@ public class EndpointOperation {
 							queryParams.add(anArgument);
 							arguments.add(anArgument);
 						}else if (modelField.getParamType().equalsIgnoreCase(PARAM_TYPE_BODY)) {
-							if(modelField.getName() == null) {
-								modelField.setName(POST_PARAM_NAME);
-							}
+							modelField.setName(POST_PARAM_NAME);
 							anArgument.setName(modelField.getName());
 							anArgument.setDataType(dataTypeMapper.getClassType(modelField.getDataType(), false));
 							anArgument.setDescription(modelField.getDescription());

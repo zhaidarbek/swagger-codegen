@@ -86,9 +86,6 @@ public class APIInvoker {
         APIInvoker invoker = new APIInvoker();
 		invoker.setSecurityHandler(securityHandler);
 		if(apiServer != null && apiServer.length() > 0) {
-			if(apiServer.substring(apiServer.length()-1).equals("/")){
-				apiServer = apiServer.substring(0, apiServer.length()-1);
-			}
 			invoker.setApiServer(apiServer);
 		}
 		invoker.setLoggingEnable(enableLogging);
@@ -170,7 +167,7 @@ public class APIInvoker {
         }
 
         //make the communication
-		resourceURL = getApiServer() + resourceURL;
+		StringBuilder resourceURLBuilder = new StringBuilder(getApiServer()).append(resourceURL);
 		if(queryParams.keySet().size() > 0){
 			int i=0;
 			for(String paramName : queryParams.keySet()){
@@ -178,19 +175,20 @@ public class APIInvoker {
 				if(i==0){
 					symbol = "?";
 				}
-				resourceURL = resourceURL + symbol + paramName + "=" + queryParams.get(paramName);
+				resourceURLBuilder.append(symbol).append(paramName).append("=").append(queryParams.get(paramName));
 				i++;
 			}
 		}
         Map<String, String> headerMap = new HashMap<String, String>();
         if(securityHandler != null){
-            securityHandler.populateSecurityInfo(resourceURL, headerMap);
+            securityHandler.populateSecurityInfo(resourceURLBuilder, headerMap);
         }
-        WebResource aResource = apiClient.resource(resourceURL);
+        WebResource aResource = apiClient.resource(resourceURLBuilder.toString());
 
 
         //set the required HTTP headers
-        Builder builder = aResource.type("application/json");
+        String contentType = (postData != null) ? "application/json" : "text/html";
+        Builder builder = aResource.type(contentType);
         for(String key : headerMap.keySet()){
             builder.header(key, headerMap.get(key));
         }

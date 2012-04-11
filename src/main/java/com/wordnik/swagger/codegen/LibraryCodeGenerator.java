@@ -163,7 +163,7 @@ public class LibraryCodeGenerator {
     			if(!generatedClassNames.contains(model.getName()) && !this.getCodeGenRulesProvider().isModelIgnored(model.getName())){
     				List<String> imports = new ArrayList<String>();
     				imports.addAll(this.config.getDefaultModelImports());
-                    if(null == model.getFields() || model.getFields().size() == 0){
+                    if(null == model.getFields()){
                         logger.warn("Model " + model.getName() + " doesn't have any properties");
                     } else {
                         for(ModelField param : model.getFields()){

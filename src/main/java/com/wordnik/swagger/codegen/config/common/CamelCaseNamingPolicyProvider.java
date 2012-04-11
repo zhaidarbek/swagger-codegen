@@ -78,7 +78,7 @@ public class CamelCaseNamingPolicyProvider implements NamingPolicyProvider {
      */
     public String getServiceName(String resourcePath) {
          String className = null;
-         int index = resourcePath.indexOf(".");
+         int index = resourcePath.indexOf(".{format}");
          if(index >= 0) {
              String resourceName = resourcePath.substring(1,index);
              className = applyClassNamingPolicy(resourceName);

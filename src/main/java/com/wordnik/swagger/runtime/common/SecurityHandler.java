@@ -43,5 +43,5 @@ public interface SecurityHandler {
      * @param resourceURL
      * @param headers
      */
-    public void populateSecurityInfo(String resourceURL, Map<String, String> httpHeaders);
+    public void populateSecurityInfo(StringBuilder resourceURL, Map<String, String> httpHeaders);
 }
