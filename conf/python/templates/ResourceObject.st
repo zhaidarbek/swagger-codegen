@@ -99,17 +99,17 @@ $if(!method.responseVoid)$
             return None
 
     $if(!method.returnValueList)$
-        # Create output objects if the response has more than one object
         responseObject = self.apiClient.deserialize(response,
-                                                    model.$method.returnClassName$.$method.returnClassName$)
+                                                    '$method.returnClassName$')
         return responseObject
     $endif$
 
     $if(method.returnValueList)$
+        # Create output objects if the response has more than one object
         responseObjects = []
         for responseObject in response:
           responseObjects.append(self.apiClient.deserialize(responseObject,
-                                                         model.$method.returnClassName$.$method.returnClassName$))
+                                                         '$method.returnClassName$'))
         return responseObjects
     $endif$
 $endif$
