@@ -91,4 +91,9 @@ public class PHPLibCodeGen extends LibraryCodeGenerator {
         return PHPConfiguration;
     }
 
+    @Override
+    protected boolean canEnumNameStartsWithNumber() {
+        return false;
+    }
+
 }
