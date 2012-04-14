@@ -7,9 +7,7 @@ templates."""
 import sys
 import os
 import re
-import urllib
-import urllib2
-import httplib
+import urllib.request, urllib.parse
 import json
 import hmac
 
@@ -20,7 +18,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
 import model
 
 
-class APIClient:
+class APIClient3:
     """Generic API client for Swagger client library builds"""
 
     def __init__(self, privateKey=None, apiServer=None):
@@ -36,7 +34,7 @@ class APIClient:
         url = self.apiServer + resourcePath
         headers = {}
         if headerParams:
-            for param, value in headerParams.iteritems():
+            for param, value in headerParams.items():
                 headers[param] = value
 
         headers['Content-type'] = 'application/json' if postData else 'text/html'
@@ -46,17 +44,18 @@ class APIClient:
             if queryParams:
                 # Need to remove None values, these should not be sent
                 sentQueryParams = {}
-                for param, value in queryParams.iteritems():
+                for param, value in queryParams.items():
                     if value != None:
                         sentQueryParams[param] = value
-                url = url + '?' + urllib.urlencode(sentQueryParams)
-            request = urllib2.Request(url=self.sign(url), headers=headers)
+                url = url + '?' + urllib.parse.urlencode(sentQueryParams)
+            request = urllib.request.Request(url=self.sign(url), headers=headers)
         elif method in ['POST', 'PUT', 'DELETE']:
             data = postData
             if data:
                 if type(postData) not in [str, int, float, bool]:
                     data = json.dumps(self.serialize(postData))
-            request = urllib2.Request(url=self.sign(url), headers=headers, data=data)
+                    print(data)
+            request = urllib.request.Request(url=self.sign(url), headers=headers, data=data)
             if method in ['PUT', 'DELETE']:
                 # Monkey patch alert! Urllib2 doesn't really do PUT / DELETE
                 request.get_method = lambda: method
@@ -65,11 +64,12 @@ class APIClient:
             raise Exception('Method ' + method + ' is not recognized.')
 
         # Make the request
-        response = urllib2.urlopen(request).read()
+        response = urllib.request.urlopen(request).read()
 
         try:
-            data = json.loads(response)
-            print data
+            responseStr = response.decode('utf-8')
+            print(responseStr)
+            data = json.loads(responseStr)
         except ValueError: # PUT requests don't return anything
             data = None
 
@@ -110,7 +110,7 @@ class APIClient:
 
         instance = objClass()
 
-        for attr, attrType in instance.swaggerTypes.iteritems():
+        for attr, attrType in instance.swaggerTypes.items():
             lc_attr = attr;
             if lc_attr[0].isupper():
                 lc_attr = lc_attr.lower()
@@ -122,7 +122,7 @@ class APIClient:
                     try:
                         value = attrType(value)
                     except UnicodeEncodeError:
-                        value = unicode(value)
+                        value = str(value)
                     setattr(instance, attr, value)
                 elif 'list<' in attrType:
                     match = re.match('list<(.*)>', attrType)
@@ -166,10 +166,10 @@ class APIClient:
         return props
 
     def sign(self, url):
-        urlParts = urllib2.urlparse.urlparse(url)
+        urlParts = urllib.parse.urlparse(url)
         signed = hmac.new(self.privateKey.encode('utf-8'), (urlParts.path + urlParts.query).encode('utf-8'), sha1)
         signature = b64encode(signed.digest()).decode('utf-8').replace('=', '')
-        url = url + ('&' if urlParts.query else '?') + "signature=" + urllib2.quote(signature)
+        url = url + ('&' if urlParts.query else '?') + "signature=" + urllib.parse.quote(signature)
         print(url)
         return url
 

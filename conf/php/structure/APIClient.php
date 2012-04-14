@@ -28,11 +28,11 @@ class APIClient {
 	public static $DELETE = "DELETE";
 
 	/**
-	 * @param string $apiKey your API key
+	 * @param string $privateKey your Private key
 	 * @param string $apiServer the address of the API server
 	 */
-	function __construct($apiKey, $apiServer) {
-		$this->apiKey = $apiKey;
+	function __construct($privateKey, $apiServer) {
+		$this->privateKey = $privateKey;
 		$this->apiServer = $apiServer;
 	}
 
@@ -49,24 +49,20 @@ class APIClient {
 		$headerParams) {
 
 		$headers = array();
-		$headers[] = "Content-type: application/json";
+		$headers[] = empty($postData) ? "Content-type: text/html" : "Content-type: application/json";
 
         # Allow API key from $headerParams to override default
         $added_api_key = False;
 		if ($headerParams != null) {
 			foreach ($headerParams as $key => $val) {
 				$headers[] = "$key: $val";
-				if ($key == 'api_key') {
-				    $added_api_key = True;
-				}
 			}
 		}
-		if (! $added_api_key) {
-		    $headers[] = "api_key: " . $this->apiKey;    
-		}		
 		
 		if (is_object($postData) or is_array($postData)) {
-			$postData = json_encode($postData);
+			$postData = json_encode(self::object_to_array($postData));
+                        print $postData;
+                        print "\n\r";
 		}
 
 		$url = $this->apiServer . $resourcePath;
@@ -95,10 +91,11 @@ class APIClient {
 			throw new Exception('Method ' . $method . ' is not recognized.');
 		}
 
-		curl_setopt($curl, CURLOPT_URL, $url);
+		curl_setopt($curl, CURLOPT_URL, self::sign($url));
 
 		// Make the request
 		$response = curl_exec($curl);
+		// print $response;
 		$response_info = curl_getinfo($curl);
 
 		// Handle the response
@@ -151,6 +148,9 @@ class APIClient {
 			settype($object, $class);
 			return $object;
 		} else {
+			if(empty($class)){
+				return;
+			}
 			$instance = new $class(); // this instantiates class named $class
 			$classVars = get_class_vars($class);
 		}
@@ -161,7 +161,9 @@ class APIClient {
 			$true_property = $property;
 
 			if (! property_exists($class, $true_property)) {
-				if (substr($property, -1) == 's') {
+				if (property_exists($class, ucfirst($property))) {
+					$true_property = ucfirst($property);
+				} else if (substr($property, -1) == 's') {
 					$true_property = substr($property, 0, -1);
 					if (! property_exists($class, $true_property)) {
 						trigger_error("class $class has no property $property"
@@ -190,6 +192,33 @@ class APIClient {
 		}
 		return $instance;
 	}
+
+        public static function object_to_array($data) {
+            if (is_array($data) || is_object($data))
+            {
+                $result = array();
+                foreach ($data as $key => $value)
+                {
+                    if(!is_null($value)){
+                        $result[$key] = self::object_to_array($value);
+                    }
+                }
+                return $result;
+            }
+            return $data;
+        }
+
+	public function sign($url) {
+		$urlParts = parse_url($url);
+		$pathAndQuery = $urlParts['path'].$urlParts['query'];
+		$signature = base64_encode(hash_hmac("sha1", $pathAndQuery, $this->privateKey, true)); 
+		if(substr($signature, -1) == '='){
+			$signature = substr($signature, 0, - 1);
+		}
+		$url = $url . (empty($urlParts['query']) ? '?' : '&') . 'signature=' . $signature;
+		return $url;
+	}
+	
 }
 
 
