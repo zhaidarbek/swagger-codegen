@@ -76,7 +76,7 @@ public class JavaTestCaseExecutor {
         }
         queryAndPathParameters.put("authToken", authToken);
 
-        ApiKeyAuthTokenBasedSecurityHandler securityHandler = new ApiKeyAuthTokenBasedSecurityHandler(apiKey, authToken);
+        SecurityHandler securityHandler = new GroupDocsUrlSigningSecurityHandler(apiKey);
         APIInvoker aAPIInvoker = APIInvoker.initialize(securityHandler, apiServer, true);
 
         runner.executeTestCase(resource, servicePackageName, suggestedMethodName, queryAndPathParameters, postData);

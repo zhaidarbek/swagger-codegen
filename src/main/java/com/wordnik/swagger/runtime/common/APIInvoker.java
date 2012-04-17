@@ -86,6 +86,9 @@ public class APIInvoker {
         APIInvoker invoker = new APIInvoker();
 		invoker.setSecurityHandler(securityHandler);
 		if(apiServer != null && apiServer.length() > 0) {
+			if(apiServer.substring(apiServer.length()-1).equals("/")){
+				apiServer = apiServer.substring(0, apiServer.length()-1);
+			}
 			invoker.setApiServer(apiServer);
 		}
 		invoker.setLoggingEnable(enableLogging);

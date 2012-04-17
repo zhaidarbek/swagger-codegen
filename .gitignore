@@ -6,8 +6,12 @@ classpath.txt
 version.properties
 .project
 .classpath
-lib/*
-build/*
-generated-files/*
+lib/
+build/
+generated-files*/
+.settings/
+target/
 *.swp
 *.swo
+.cache
+
