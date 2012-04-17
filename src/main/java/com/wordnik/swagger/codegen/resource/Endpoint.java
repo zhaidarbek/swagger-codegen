@@ -16,15 +16,13 @@
 
 package com.wordnik.swagger.codegen.resource;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.wordnik.swagger.codegen.ResourceMethod;
 import com.wordnik.swagger.codegen.config.DataTypeMappingProvider;
 import com.wordnik.swagger.codegen.config.LanguageConfiguration;
 import com.wordnik.swagger.codegen.config.NamingPolicyProvider;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User: ramesh
@@ -132,30 +130,21 @@ public class Endpoint {
         for(ModelField modelField : modelFields){
             if (modelField.getParamType().equalsIgnoreCase(EndpointOperation.PARAM_TYPE_BODY) ){
                 isParamSetAvailable = false;
-
-            	String dataType = modelField.getDataType();
-            	Matcher matcher = patternArrayType.matcher(dataType);
-            	if(matcher.matches()){
-            		dataType = matcher.group(2);
-            	}
-            	if(dataTypeMapper.isPrimitiveType(dataType)){
-            		isParamSetAvailable = true;
-            	} else {
-	                for(Model model : resource.getModels()){
-	                	if(model.getName().equalsIgnoreCase(dataType)){
-	                		isParamSetAvailable = true;
-	                		break;
-	                	}
-	                }
-	                if(!isParamSetAvailable){
-	                    return false;
-	                }
-            	}
+                for(Model model : resource.getModels()){
+                    if(dataTypeMapper.isPrimitiveType(modelField.getGenericType())){
+                        isParamSetAvailable = true;
+                        break;
+                    }
+                    if(model.getName().equalsIgnoreCase(modelField.getGenericType())){
+                        isParamSetAvailable = true;
+                        break;
+                    }
+                }
+                if(!isParamSetAvailable){
+                    return false;
+                }
             }
         }
         return isParamSetAvailable;
     }
-    
-    private static Pattern patternArrayType = Pattern.compile("(List|Set|Array)\\[(\\w*)\\]");
-
 }
