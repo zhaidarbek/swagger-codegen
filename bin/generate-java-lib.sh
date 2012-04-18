@@ -21,3 +21,12 @@ done
 export CLASSPATH=$(cat classpath.txt)
 export JAVA_OPTS="${JAVA_OPTS} -Dproperty=Xmx2g"
 java $WORDNIK_OPTS $JAVA_CONFIG_OPTIONS $JAVA_OPTS -cp $CLASSPATH com.wordnik.swagger.codegen.config.java.JavaLibCodeGen "$@"
+
+mkdir $4/bin
+mkdir $4/lib
+mkdir $4/conf
+cp conf/java/sample/pom.xml $4/
+cp conf/java/sample/lib-test-* $4/conf
+cp bin/runjavaTestCase.sh bin/test-java-lib.sh $4/bin
+cp target/swagger-codegen*.jar $4/lib/swagger-codegen.jar
+
