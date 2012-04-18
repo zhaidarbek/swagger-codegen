@@ -101,7 +101,7 @@ public class LibraryCodeGenerator {
     /**
      * Generate classes needed for the model and API invocation
      */
-    public void generateCode()	{
+    public List<Resource> generateCode()	{
         apiMarshaller = new SwaggerResourceDocReader(this.config, this.getDataTypeMappingProvider(), this.getNameGenerator());
     	//read resources and get their documentation
         List<Resource> resources = apiMarshaller.readResourceDocumentation();
@@ -121,6 +121,8 @@ public class LibraryCodeGenerator {
         }
         generateAPIClasses(resources, aTemplateGroup);
         generateMiscClasses(resources, aTemplateGroup);
+        
+        return resources;
     }
 
     /**

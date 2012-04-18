@@ -83,6 +83,9 @@ var ApiInvoker = new function() {
                        type: "GET",
                        dataType: "jsonp",
                        contentType: "application/json",
+                       beforeSend: function(xhr, s){
+                           s.url = ApiInvoker.sign(s.url);
+                       },
                        success: function(response) {
                            ApiInvoker.fire(completionEvent, returnType, requestId, response, callback);
                        }
@@ -97,6 +100,9 @@ var ApiInvoker = new function() {
                         dataType: "json",
                         contentType: "application/json",
                         headers: this.requestHeader,
+                        beforeSend: function(xhr, s){
+                            s.url = ApiInvoker.sign(s.url);
+                        },
                         success: function(response) {
                             ApiInvoker.fire(completionEvent, returnType, requestId, response, callback);
                         }
@@ -108,6 +114,9 @@ var ApiInvoker = new function() {
                         type: "PUT",
                         dataType: "json",
                         contentType: "application/json",
+                        beforeSend: function(xhr, s){
+                            s.url = ApiInvoker.sign(s.url);
+                        },
                         success: function(response) {
                             ApiInvoker.fire(completionEvent, returnType, requestId, response, callback);
                         }
@@ -119,6 +128,9 @@ var ApiInvoker = new function() {
                         type: "DELETE",
                         dataType: "json",
                         contentType: "application/json",
+                        beforeSend: function(xhr, s){
+                            s.url = ApiInvoker.sign(s.url);
+                        },
                         success: function(response) {
                             ApiInvoker.fire(completionEvent, returnType, requestId, response, callback);
                         }
@@ -227,7 +239,34 @@ var ApiInvoker = new function() {
 
             this.arrayToPathValue = function(objects) {
                 return objects.join(",");
-            }
+            },
 
+            this.sign = function(url) {
+				var urlParts = this.splitUrl(url);
+				var sha = new jsSHA(urlParts.pathAndQuery, "ASCII");
+				var hash = sha.getHMAC(this.apiKey, "ASCII", "B64");
+				var signature = encodeURIComponent(hash);
+				return url +
+				    (urlParts.query == null || urlParts.query.length == 0 ? '?' : '&') +
+				    "signature=" + signature;
+            },
+		
+		    this.splitUrl = (function () {
+		        var regex = new RegExp("(\\w+)://([^/]+)([^\?]*)([\?].+)?");
+		
+		        return function (url) {
+		            var matches = url.match(regex);
+		            var path = (matches.length > 3 ? matches[3] : null);
+		            var query = (matches.length > 4 ? matches[4] : null);
+		
+		            return {
+		                "schema": matches[1],
+		                "authority": (matches.length > 2 ? matches[2] : null),
+		                "path": path,
+		                "query": query,
+		                "pathAndQuery": (query ? (path + query) : path)
+		            };
+		        };
+		    })()
 
 };

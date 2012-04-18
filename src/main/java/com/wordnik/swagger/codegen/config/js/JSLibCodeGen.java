@@ -1,11 +1,29 @@
 package com.wordnik.swagger.codegen.config.js;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.mozilla.javascript.ErrorReporter;
+import org.mozilla.javascript.EvaluatorException;
+
 import com.wordnik.swagger.codegen.LibraryCodeGenerator;
 import com.wordnik.swagger.codegen.config.LanguageConfiguration;
+import com.wordnik.swagger.codegen.config.NamingPolicyProvider;
 import com.wordnik.swagger.codegen.exception.CodeGenerationException;
+import com.wordnik.swagger.codegen.resource.Model;
+import com.wordnik.swagger.codegen.resource.Resource;
 import com.wordnik.swagger.codegen.util.FileUtil;
-
-import java.io.*;
+import com.yahoo.platform.yui.compressor.JarClassLoader;
+import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
+import com.yahoo.platform.yui.compressor.YUICompressor;
 
 /**
  * @author ayush
@@ -19,11 +37,13 @@ public class JSLibCodeGen extends LibraryCodeGenerator {
             throw new CodeGenerationException("Invalid number of arguments passed: No command line argument was passed to the program for config json");
         }
         String libraryHome = null;
-
+        NamingPolicyProvider nameGenerator = null;
+        List<Resource> resources = new ArrayList<Resource>();
         if (args.length == 1) {
             String configPath = args[0];
             JSLibCodeGen codeGenerator = new JSLibCodeGen(configPath);
-            codeGenerator.generateCode();
+            resources = codeGenerator.generateCode();
+            nameGenerator = codeGenerator.getNameGenerator();
 
             libraryHome = codeGenerator.getLanguageConfig().getLibraryHome();
         }
@@ -44,36 +64,73 @@ public class JSLibCodeGen extends LibraryCodeGenerator {
             JSLibCodeGen codeGenerator = new JSLibCodeGen(apiServerURL, apiKey, modelPackageName,
                     apiPackageName, classOutputDir, libraryHome);
             codeGenerator.getConfig().setDefaultServiceBaseClass(DEFAULT_SERVICE_BASE_CLASS);
-            codeGenerator.generateCode();
+            resources = codeGenerator.generateCode();
+            nameGenerator = codeGenerator.getNameGenerator();
         }
 
         try {
             if (libraryHome != null) {
-                concatinateFiles(libraryHome + "/api-lib.js", libraryHome + "/src/main/js/");
+            	File sourcePath = new File(libraryHome + "/src/main/js/");
+            	File distPath = new File(libraryHome + "/dist/"); 
+            	if(!distPath.exists()){
+            		distPath.mkdir();
+            	}
+                PrintWriter pw = new PrintWriter(new FileOutputStream(new File(distPath, "common.js")));
+				appendFiles(pw, sourcePath.listFiles());
+				pw.close();
+
+            	for(Resource resource : resources){
+            		concatinateFiles(sourcePath, new File(distPath, resource.generateClassName(nameGenerator) + ".js"), resource.getModels());
+            	}
+            	
+            	// compress concatenated js files
+            	compressFiles(distPath);
             }
         } catch (IOException e) {
             System.out.println("Unable to combine files");
             e.printStackTrace();
+        } catch (Exception e) {
+            System.out.println("Unable to compress files");
+            e.printStackTrace();
         }
     }
 
-    private static void concatinateFiles(String outFile, String sourcePath) throws IOException {
-        final PrintWriter pw = new PrintWriter(new FileOutputStream(outFile));
-        final File file = new File(sourcePath);
+	private static void concatinateFiles(File sourcePath, File outFile, List<Model> filter) throws IOException {
+    	final PrintWriter pw = new PrintWriter(new FileOutputStream(outFile));
 
-        System.out.println("Scanning " + file);
-        appendFiles(pw, file.listFiles());
-
-        final File modelSource = new File(file, "model");
+        final List<String> modelsFilter = new ArrayList<String>();
+        for (Model model : filter) {
+			modelsFilter.add(model.getGenratedClassName() + ".js");
+		}
+        final File modelSource = new File(sourcePath, "model");
         System.out.println("Scanning " + modelSource.getAbsolutePath());
-        appendFiles(pw, modelSource.listFiles());
+        appendFiles(pw, modelSource.listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				if(modelsFilter.contains(name)){
+					return true;
+				} else {
+					return false;
+				}
+			}
+		}));
 
-        final File apiSource = new File(file, "api");
+        final String apiFileName = outFile.getName();
+        final File apiSource = new File(sourcePath, "api");
         System.out.println("Scanning " + apiSource.getAbsolutePath());
-        appendFiles(pw, apiSource.listFiles());
+        appendFiles(pw, apiSource.listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				if(name.equals(apiFileName)){
+					return true;
+				} else {
+					return false;
+				}
+			}
+		}));
 
         pw.close();
-        System.out.println("Concatenated to " + outFile);
+        System.out.println("Concatenated to " + apiFileName);
     }
 
     private static void appendFiles(PrintWriter pw, File[] files) throws IOException {
@@ -92,6 +149,22 @@ public class JSLibCodeGen extends LibraryCodeGenerator {
             }
         }
     }
+
+    private static void compressFiles(File distPath) throws Exception {
+    	System.out.println("Trying to compress files using YUI compressor...");
+    	ClassLoader loader = new JarClassLoader();
+        Thread.currentThread().setContextClassLoader(loader);
+        Class c = loader.loadClass(YUICompressor.class.getName());
+        Method main = c.getMethod("main", new Class[]{String[].class});
+        
+        List<String> args = new ArrayList<String>();
+        args.add("-o");
+        args.add(".js$:-min.js");
+        for (File file : distPath.listFiles()) {
+			args.add(file.getAbsolutePath());
+		}
+        main.invoke(null, new Object[]{ args.toArray(new String[args.size()]) });
+	}
 
     public JSLibCodeGen(String apiServerURL, String apiKey, String modelPackageName, String apiPackageName,
                         String classOutputDir, String libraryHome) {

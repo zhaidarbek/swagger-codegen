@@ -385,6 +385,13 @@
       <artifactId>commons-lang</artifactId>
       <version>${commons-lang-version}</version>
     </dependency>
+    <dependency>
+      <groupId>yuicompressor</groupId>
+      <artifactId>yuicompressor-with-dependencies</artifactId>
+      <version>2.4.7</version>
+      <scope>system</scope>
+      <systemPath>${basedir}/lib/yuicompressor-2.4.7.jar</systemPath>
+    </dependency>
   </dependencies>
   <properties>
     <scala-version>2.9.1-1</scala-version>
