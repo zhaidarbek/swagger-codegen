@@ -2,315 +2,54 @@
     "resources" : [
 	    {
 	        "id" : 1,
-	        "name" : "Find Per by Id",
+	        "name" : "Get list of annotations",
 	        "httpMethod" : "GET",
-	        "path" : "/pet.{format}/{petId}",
-	        "suggestedMethodName" : "getPetById"
+	        "path" : "/ant/{userId}/files/{fileId}/annotations",
+	        "suggestedMethodName" : "ListAnnotations"
 	    },
 	    {
 	        "id" : 2,
-	        "name" : "Find pets by status",
-	        "httpMethod" : "GET",
-	        "path" : "/pet.{format}/findByStatus",
-	        "suggestedMethodName" : "findPetsByStatus"
-	    },
-	    {
-	        "id" : 3,
-	        "name" : "Find pets by tags",
-	        "httpMethod" : "GET",
-	        "path" : "/pet.{format}/findByTags",
-	        "suggestedMethodName" : "findPetsByTags"
-	    },
-	    {
-	        "id" : 4,
-	        "name" : "Add a pet",
+	        "name" : "Create annotation",
 	        "httpMethod" : "POST",
-	        "path" : "/pet.{format}",
-	        "suggestedMethodName" : "addPet"
-	    },
-	    {
-	        "id" : 5,
-	        "name" : "Update a pet",
-	        "httpMethod" : "PUT",
-	        "path" : "/pet.{format}",
-	        "suggestedMethodName" : "updatePet"
-	    },
-	    {
-	        "id" : 6,
-	        "name" : "Create user",
-	        "httpMethod" : "POST",
-	        "path" : "/user.{format}",
-	        "suggestedMethodName" : "createUser"
-	    },
-	    {
-	        "id" : 7,
-	        "name" : "Update user",
-	        "httpMethod" : "PUT",
-	        "path" : "/user.{format}/{username}",
-	        "suggestedMethodName" : "updateUser"
-	    },
-	    {
-	        "id" : 8,
-	        "name" : "Delete user",
-	        "httpMethod" : "DELETE",
-	        "path" : "/user.{format}/{username}",
-	        "suggestedMethodName" : "deleteUser"
-	    },
-	    {
-	        "id" : 9,
-	        "name" : "Get user by user name",
-	        "httpMethod" : "GET",
-	        "path" : "/user.{format}/{username}",
-	        "suggestedMethodName" : "getUserByName"
-	    },
-	    {
-	        "id" : 10,
-	        "name" : "Login",
-	        "httpMethod" : "GET",
-	        "path" : "/user.{format}/login",
-	        "suggestedMethodName" : "loginUser"
-	    },
-	    {
-	        "id" : 11,
-	        "name" : "Logout",
-	        "httpMethod" : "GET",
-	        "path" : "/user.{format}/logout",
-	        "suggestedMethodName" : "logoutUser"
-	    },
-	    {
-	        "id" : 12,
-	        "name" : "Find order by id",
-	        "httpMethod" : "GET",
-	        "path" : "/store.{format}/order/{orderId}",
-	        "suggestedMethodName" : "getOrderById"
-	    },
-	    {
-	        "id" : 13,
-	        "name" : "Delete order by id",
-	        "httpMethod" : "DELETE",
-	        "path" : "/store.{format}/order/{orderId}",
-	        "suggestedMethodName" : "deleteOrder"
-	    },
-	    {
-	        "id" : 14,
-	        "name" : "Create order",
-	        "httpMethod" : "POST",
-	        "path" : "/store.{format}/order",
-	        "suggestedMethodName" : "placeOrder"
-	    },
-        {
-            "id" : 15,
-            "name" : "Get users with array input",
-            "httpMethod" : "POST",
-            "path" : "/user.{format}/usersWithArray",
-            "suggestedMethodName" : "getUserByNamesArray"
-        },
-        {
-            "id" : 16,
-            "name" : "get users with list",
-            "httpMethod" : "POST",
-            "path" : "/user.{format}/usersWithList",
-            "suggestedMethodName" : "getUserByNamesList"
-        }
+	        "path" : "/ant/{userId}/files/{fileId}/annotations",
+	        "suggestedMethodName" : "CreateAnnotation"
+	    }
 	],
     "testSuites" : [
         	{
     	        "id" : 1,
-    	        "name" : "Test User service related APIs",
+    	        "name" : "Test Annotation service related APIs",
     	        "testCases" : [
                     {
-                        "name" : "Create User",
+                        "name" : "List file annotations",
                         "id" : 1,
-                        "resourceId" : 6,
-                        "input" : {
-                            "postData":"${input.userList[0]}"
-                        },
-		                "assertions" : [
-                            {
-                                "actualOutput" : "${output(1.1)}",
-                                "condition" : "!=",
-                                "expectedOutput" : "EXCEPTION"
-                            }
-		                ]
-                    },
-                    {
-                        "name" : "Login User",
-                        "id" : 2,
-                        "resourceId" : 10,
-                        "input" : {
-                            "username":"${input.userList[0].username}",
-                            "password":"${input.userList[0].password}"
-                        },
-		                "assertions" : [
-                            {
-                                "actualOutput" : "${output(1.2)}",
-                                "condition" : "!=",
-                                "expectedOutput" : "EXCEPTION"
-                            }
-		                ]
-                    },
-                    {
-                        "name" : "Find user by name",
-                        "id" : 3,
-                        "resourceId" : 9,
-                        "input" : {
-                            "username":"${input.userList[0].username}"
-                        },
-		                "assertions" : [
-                            {
-                                "actualOutput" : "${output(1.3).username}",
-                                "condition" : "==",
-                                "expectedOutput" : "${input.userList[0].username}"
-                            }
-		                ]
-                    },
-                    {
-                        "name" : "Delete user by name",
-                        "id" : 4,
-                        "resourceId" : 9,
-                        "input" : {
-                            "username":"${input.userList[0].username}"
-                        },
-		                "assertions" : [
-                            {
-                                "actualOutput" : "${output(1.4)}",
-                                "condition" : "!=",
-                                "expectedOutput" : "EXCEPTION"
-                            }
-		                ]
-                    },
-                    {
-                        "name" : "Find user by name  with special characters",
-                        "id" : 5,
-                        "resourceId" : 9,
-                        "input" : {
-                            "username":"${input.userList[2].username}"
-                        },
-		                "assertions" : [
-                            {
-                                "actualOutput" : "${output(1.5).username}",
-                                "condition" : "==",
-                                "expectedOutput" : "${input.userList[2].username}"
-                            }
-		                ]
-                    },
-                    {
-                         "name" : "Find users with array of user names",
-                         "id" : 6,
-                         "resourceId" : 15,
-                         "input" : {
-                             "postData":"[\"testuser1\", \"testuser2\"]"
-                         },
-                        "assertions" : [
-                             {
-                                "actualOutput" : "${output(1.6).size}",
-                                "condition" : "==",
-                                "expectedOutput" : "2"
-                             }
-                        ]
-                    },
-                    {
-                          "name" : "Find users with list of user names",
-                          "id" : 7,
-                          "resourceId" : 16,
-                          "input" : {
-                              "postData":"[\"testuser1\", \"testuser2\"]"
-                          },
-                         "assertions" : [
-                              {
-                                 "actualOutput" : "${output(1.7).size}",
-                                 "condition" : "==",
-                                 "expectedOutput" : "2"
-                              }
-                         ]
-                    }
-
-
-
-    	        ]
-    	    },
-        	{
-    	        "id" : 2,
-    	        "name" : "Test Pet service related APIs",
-    	        "testCases" : [
-                    {
-                        "name" : "Add pet",
-                        "id" : 1,
-                        "resourceId" : 4,
-                        "input" : {
-                            "postData":"${input.petList[0]}"
-                        },
-		                "assertions" : [
-                            {
-                                "actualOutput" : "${output(2.1)}",
-                                "condition" : "!=",
-                                "expectedOutput" : "EXCEPTION"
-                            }
-		                ]
-                    },
-                    {
-                        "name" : "Find pet by id",
-                        "id" : 2,
                         "resourceId" : 1,
                         "input" : {
-                            "petId":"1"
+                            "userId":"2721ad21bcf0d71e",
+                            "fileId":"d16aeca842c8955a9834911e5a62ca2f120f5a2a7bf7dc7952a2a092cd15277c"
                         },
 		                "assertions" : [
                             {
-                                "actualOutput" : "${output(2.2)}",
-                                "condition" : "!=",
-                                "expectedOutput" : "NULL"
+                                "actualOutput" : "${output(1.1).status}",
+                                "condition" : "==",
+                                "expectedOutput" : "Ok"
                             }
 		                ]
                     },
                     {
-                        "name" : "Find pet by status",
-                        "id" : 3,
+                        "name" : "Create file annotation",
+                        "id" : 2,
                         "resourceId" : 2,
                         "input" : {
-                            "status":"available,sold,pending"
+                            "userId":"2721ad21bcf0d71e",
+                            "fileId":"d16aeca842c8955a9834911e5a62ca2f120f5a2a7bf7dc7952a2a092cd15277c",
+							"postData" : "${input.annotationInfoList[0]}"
                         },
 		                "assertions" : [
                             {
-                                "actualOutput" : "${output(2.3).size}",
-                                "condition" : ">",
-                                "expectedOutput" : "0"
-                            }
-		                ]
-                    }
-    	        ]
-    	    },
-        	{
-    	        "id" : 3,
-    	        "name" : "Test Store service related APIs",
-    	        "testCases" : [
-                    {
-                        "name" : "Find order by id",
-                        "id" : 1,
-                        "resourceId" : 12,
-                        "input" : {
-                            "orderId":"3"
-                        },
-		                "assertions" : [
-                            {
-                                "actualOutput" : "${output(3.1)}",
-                                "condition" : "!=",
-                                "expectedOutput" : "NULL"
-                            }
-		                ]
-                    },
-                    {
-                        "name" : "Place order",
-                        "id" : 2,
-                        "resourceId" : 14,
-                        "input" : {
-                            "postData":"${input.orderList[0]}"
-                        },
-		                "assertions" : [
-                            {
-                                "actualOutput" : "${output(1.2)}",
-                                "condition" : "!=",
-                                "expectedOutput" : "EXCEPTION"
+                                "actualOutput" : "${output(1.2).status}",
+                                "condition" : "==",
+                                "expectedOutput" : "Ok"
                             }
 		                ]
                     }
