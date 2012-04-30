@@ -306,7 +306,7 @@ public class APIInvoker {
 
     private static String encode(String value){
         try{
-            return URLEncoder.encode(value, "utf-8").replaceAll("\\+", "%20");
+            return URLEncoder.encode(value, "utf-8").replaceAll("\\+", "%20").replaceAll("%2F", "/");
         }catch(UnsupportedEncodingException uee){
             throw new RuntimeException(uee.getMessage());
         }

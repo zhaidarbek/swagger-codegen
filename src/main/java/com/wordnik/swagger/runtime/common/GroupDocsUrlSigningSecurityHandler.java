@@ -3,6 +3,7 @@ package com.wordnik.swagger.runtime.common;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
@@ -25,7 +26,7 @@ public class GroupDocsUrlSigningSecurityHandler implements SecurityHandler {
     public void populateSecurityInfo(StringBuilder resourceURL, Map<String, String> httpHeaders) {
     	try {
 			URL url = new URL(resourceURL.toString());
-			String pathAndQuery = url.getPath() + (url.getQuery() == null ? "" : url.getQuery());
+			String pathAndQuery = url.getFile();
 			String signature = sign(pathAndQuery);
 			resourceURL.append((url.getQuery() == null ? "?" : "&")).append("signature=").append(signature);
 		} catch (MalformedURLException e) {
@@ -38,7 +39,7 @@ public class GroupDocsUrlSigningSecurityHandler implements SecurityHandler {
 			Mac mac = Mac.getInstance(SIGN_ALG);
 			mac.init(new SecretKeySpec(privateKey.getBytes(ENC), SIGN_ALG));
 			String signature = new String(Base64.encode(mac.doFinal(toSign.getBytes(ENC))), ENC);
-			return signature.replace("=", "");
+			return encode(signature.replace("=", ""));
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		} catch (NoSuchAlgorithmException e) {
@@ -49,5 +50,13 @@ public class GroupDocsUrlSigningSecurityHandler implements SecurityHandler {
 		
 		return null;
 	}
-    
+
+    private static String encode(String value){
+        try{
+            return URLEncoder.encode(value, ENC).replaceAll("\\+", "%20");
+        }catch(UnsupportedEncodingException uee){
+            throw new RuntimeException(uee.getMessage());
+        }
+    }
+
 }

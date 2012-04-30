@@ -66,7 +66,7 @@ $endif$
 
 		//parse inputs
 		String  resourcePath = "$method.resourcePath$";
-		resourcePath = resourcePath.replace("{format}","json");
+		resourcePath = resourcePath.replace("{format}","json").replaceAll("\\\*", "");
 		String method = "$method.methodType$";
 		Map<String, String> queryParams = new HashMap<String, String>();
 		Map<String, String> headerParams = new HashMap<String, String>();
