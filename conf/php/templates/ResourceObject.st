@@ -47,6 +47,7 @@ $if(!method.responseVoid)$
 		//parse inputs
 		\$resourcePath = "$method.resourcePath$";
 		\$resourcePath = str_replace("{format}", "json", \$resourcePath);
+		\$resourcePath = str_replace("*", "", \$resourcePath);
 		\$method = "$method.methodType$";
         \$queryParams = array();
         \$headerParams = array();
@@ -59,7 +60,7 @@ $method.queryParameters:{ argument |
 }$
 $method.pathParameters:{ argument |
 		if(\$$argument.name$ != null) {
-			\$resourcePath = str_replace("{$argument.name$}", \$$argument.name$, \$resourcePath);
+			\$resourcePath = str_replace("{$argument.name$}", \$this->apiClient->toPathValue(\$$argument.name$), \$resourcePath);
 		}
 }$
 $method.headerParameters:{ argument |
@@ -76,7 +77,7 @@ $method.queryParameters:{ argument |
 }$
 $method.pathParameters:{ argument |
 		if(\$$argument.inputModelClassArgument$ != null && \$$argument.inputModelClassArgument$->$argument.name$ != null) {
-		 	\$resourcePath = str_replace("{$argument.name$}", \$$argument.inputModelClassArgument$->$argument.name$, \$resourcePath);	
+		 	\$resourcePath = str_replace("{$argument.name$}", \$this->apiClient->toPathValue(\$$argument.inputModelClassArgument$->$argument.name$), \$resourcePath);	
 		}
 }$
 $method.headerParameters:{ argument |

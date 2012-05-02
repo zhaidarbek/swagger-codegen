@@ -49,7 +49,19 @@ class APIClient {
 		$headerParams) {
 
 		$headers = array();
-		$headers[] = empty($postData) ? "Content-type: text/html" : "Content-type: application/json";
+
+		if (empty($postData)){
+			$headers[] = "Content-type: text/html";
+
+		} else if (is_array($postData) && count($postData) == 1 && array_key_exists("stream", $postData)) {
+			$headers[] = "Content-type: multipart/form-data";
+
+		} else if (is_object($postData) or is_array($postData)) {
+			$headers[] = "Content-type: application/json";
+			$postData = json_encode(self::object_to_array($postData));
+                        print $postData;
+                        print "\n\r";
+		}
 
         # Allow API key from $headerParams to override default
         $added_api_key = False;
@@ -58,16 +70,11 @@ class APIClient {
 				$headers[] = "$key: $val";
 			}
 		}
-		
-		if (is_object($postData) or is_array($postData)) {
-			$postData = json_encode(self::object_to_array($postData));
-                        print $postData;
-                        print "\n\r";
-		}
 
 		$url = $this->apiServer . $resourcePath;
 
 		$curl = curl_init();
+		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($curl, CURLOPT_TIMEOUT, 5);
 		// return the result on success, rather than just TRUE
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -95,7 +102,9 @@ class APIClient {
 
 		// Make the request
 		$response = curl_exec($curl);
-		// print $response;
+		print $response;
+		print "\n\r";
+
 		$response_info = curl_getinfo($curl);
 
 		// Handle the response
@@ -121,16 +130,16 @@ class APIClient {
 
 
 	/**
-	 * Take value and turn it into a string suitable for inclusion in 
+	 * Take value and turn it into a string suitable for inclusion in
 	 * the path or the header
 	 * @param object $object an object to be serialized to a string
 	 * @return string the serialized object
 	 */
 	public static function toPathValue($object) {
         if (is_array($object)) {
-            return implode(',', $object);
+            return str_replace("%2F", "/", rawurlencode(implode(',', $object)));
         } else {
-            return $object;
+            return str_replace("%2F", "/", rawurlencode($object));
         }
 	}
 
@@ -210,15 +219,15 @@ class APIClient {
 
 	public function sign($url) {
 		$urlParts = parse_url($url);
-		$pathAndQuery = $urlParts['path'].$urlParts['query'];
-		$signature = base64_encode(hash_hmac("sha1", $pathAndQuery, $this->privateKey, true)); 
+		$pathAndQuery = $urlParts['path'].(empty($urlParts['query']) ? "" : "?".$urlParts['query']);
+		$signature = base64_encode(hash_hmac("sha1", $pathAndQuery, $this->privateKey, true));
 		if(substr($signature, -1) == '='){
 			$signature = substr($signature, 0, - 1);
 		}
-		$url = $url . (empty($urlParts['query']) ? '?' : '&') . 'signature=' . $signature;
+		$url = $url . (empty($urlParts['query']) ? '?' : '&') . 'signature=' . rawurlencode($signature);
 		return $url;
 	}
-	
+
 }
 
 
