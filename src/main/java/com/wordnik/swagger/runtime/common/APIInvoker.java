@@ -191,7 +191,18 @@ public class APIInvoker {
 
 
         //set the required HTTP headers
-        String contentType = (postData != null) ? "application/json" : "text/html";
+        boolean isMultipart = false;
+        String contentType;
+        if(postData == null) {
+        	contentType = "text/html";
+        } else {
+        	contentType = "application/json";
+        	if(postData instanceof com.sun.jersey.multipart.MultiPart){
+        		isMultipart = true;
+        		contentType = "multipart/form-data";
+        	}
+        }
+        
         Builder builder = aResource.type(contentType);
         for(String key : headerMap.keySet()){
             builder.header(key, headerMap.get(key));
@@ -206,9 +217,9 @@ public class APIInvoker {
         if(method.equals(GET)) {
         	clientResponse =  builder.get(ClientResponse.class);
         }else if (method.equals(POST)) {
-        	clientResponse =  builder.post(ClientResponse.class, serialize(postData));
+        	clientResponse =  builder.post(ClientResponse.class, isMultipart ? postData : serialize(postData));
         }else if (method.equals(PUT)) {
-        	clientResponse =  builder.put(ClientResponse.class, serialize(postData));
+        	clientResponse =  builder.put(ClientResponse.class, isMultipart ? postData : serialize(postData));
         }else if (method.equals(DELETE)) {
         	clientResponse =  builder.delete(ClientResponse.class);
         }

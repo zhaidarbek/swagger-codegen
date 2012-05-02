@@ -265,9 +265,13 @@ public class EndpointOperation {
 							queryParams.add(anArgument);
 							arguments.add(anArgument);
 						}else if (modelField.getParamType().equalsIgnoreCase(PARAM_TYPE_BODY)) {
+							if(modelField.getName() != null && modelField.getName().equalsIgnoreCase("stream")){
+								anArgument.setDataType("com.sun.jersey.multipart.FormDataMultiPart");
+							} else {
+								anArgument.setDataType(dataTypeMapper.getClassType(modelField.getDataType(), false));
+							}
 							modelField.setName(POST_PARAM_NAME);
 							anArgument.setName(modelField.getName());
-							anArgument.setDataType(dataTypeMapper.getClassType(modelField.getDataType(), false));
 							anArgument.setDescription(modelField.getDescription());
 							anArgument.setRequired(modelField.isRequired());
 							anArgument.setDefaultValue(modelField.getDefaultValue());
