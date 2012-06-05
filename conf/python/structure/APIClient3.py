@@ -10,13 +10,13 @@ import re
 import urllib.request, urllib.parse
 import json
 import hmac
+import mimetypes
 
 from hashlib import sha1
 from base64 import b64encode
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
 import model
-
 
 class APIClient3:
     """Generic API client for Swagger client library builds"""
@@ -37,7 +37,15 @@ class APIClient3:
             for param, value in headerParams.items():
                 headers[param] = value
 
-        headers['Content-type'] = 'application/json' if postData else 'text/html'
+        filename = False
+        if not postData:
+            headers['Content-type'] = 'text/html'
+        elif postData.startswith('file://'):
+            filename = postData[7:len(postData)]
+            headers['Content-type'] = mimetypes.guess_type(filename)[0] or 'application/octet-stream'
+            headers['Content-Length'] = str(os.path.getsize(filename))
+        else:
+            headers['Content-type'] = 'application/json'
 
         data = None
         if method == 'GET':
@@ -51,10 +59,11 @@ class APIClient3:
             request = urllib.request.Request(url=self.sign(url), headers=headers)
         elif method in ['POST', 'PUT', 'DELETE']:
             data = postData
-            if data:
-                if type(postData) not in [str, int, float, bool]:
-                    data = json.dumps(self.serialize(postData))
-                    print(data)
+            if filename:
+                data = open(filename, "rb")
+            elif data and type(postData) not in [str, int, float, bool]:
+                data = json.dumps(self.serialize(postData))
+                print(data)
             request = urllib.request.Request(url=self.sign(url), headers=headers, data=data)
             if method in ['PUT', 'DELETE']:
                 # Monkey patch alert! Urllib2 doesn't really do PUT / DELETE
@@ -83,9 +92,9 @@ class APIClient3:
             string -- json serialization of object
         """
         if type(obj) == list:
-            return ','.join(obj)
+            return urllib.parse.quote(','.join(obj)).replace("%2F", "/")
         else:
-            return obj
+            return urllib.parse.quote(obj).replace("%2F", "/")
 
     def deserialize(self, obj, objClass):
         """Derialize a JSON string into an object.
@@ -167,9 +176,9 @@ class APIClient3:
 
     def sign(self, url):
         urlParts = urllib.parse.urlparse(url)
-        signed = hmac.new(self.privateKey.encode('utf-8'), (urlParts.path + urlParts.query).encode('utf-8'), sha1)
+        pathAndQuery = (urlParts.path + ('?' + urlParts.query if urlParts.query else urlParts.query)).replace(" ", "%20")
+        signed = hmac.new(self.privateKey.encode('utf-8'), pathAndQuery.encode('utf-8'), sha1)
         signature = b64encode(signed.digest()).decode('utf-8').replace('=', '')
         url = url + ('&' if urlParts.query else '?') + "signature=" + urllib.parse.quote(signature)
-        print(url)
         return url
 

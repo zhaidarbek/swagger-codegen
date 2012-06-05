@@ -99,6 +99,7 @@ $method.pathParameters:{ argument |
 		 	resourcePath = resourcePath.replace("{$argument.name$}", APIInvoker.toPathValue($argument.methodNameFromModelClass$));
 		}
 }$
+        resourcePath = resourcePath.replaceAll("\\\\{\\\w*\\\\}", "");
 $method.headerParameters:{ argument |
 		if( $argument.inputModelClassArgument$ != null && $argument.methodNameFromModelClass$ != null) {
 		 	headerParams.put("$argument.name$", APIInvoker.toPathValue($argument.methodNameFromModelClass$));

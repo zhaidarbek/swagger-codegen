@@ -47,6 +47,7 @@ $methods:{ method |
         # Parse inputs
         resourcePath = '$method.resourcePath$'
         resourcePath = resourcePath.replace('{format}', 'json')
+        resourcePath = resourcePath.replace('*', '')
         method = '$method.methodType$'
 
         queryParams = {}
@@ -59,7 +60,7 @@ $method.queryParameters:{ argument |
 
 $method.pathParameters:{ argument |
         if $argument.name$ != None:
-            resourcePath = resourcePath.replace('{$argument.name$}', $argument.name$)
+            resourcePath = resourcePath.replace('{$argument.name$}', self.apiClient.toPathValue($argument.name$))
 }$
 $method.headerParameters:{ argument |
         if $argument.name$ != None:
@@ -74,7 +75,7 @@ $method.queryParameters:{ argument |
 }$
 $method.pathParameters:{ argument |
         if $argument.inputModelClassArgument$ != None and $argument.inputModelClassArgument$.$argument.name$ != None:
-            resourcePath = resourcePath.replace('{$argument.name$}', $argument.inputModelClassArgument$.$argument.name$)
+            resourcePath = resourcePath.replace('{$argument.name$}', self.apiClient.toPathValue($argument.inputModelClassArgument$.$argument.name$))
 }$
 $method.headerParameters:{ argument |
         if $argument.inputModelClassArgument$ != None and $argument.inputModelClassArgument$.$argument.name$ != None:

@@ -18,6 +18,7 @@ import com.groupdocs.sdk.java.model.CreateAnnotationResponse;
 import com.groupdocs.sdk.java.model.ListAnnotationsResponse;
 import com.groupdocs.sdk.java.model.Rectangle;
 import com.groupdocs.sdk.java.model.UploadResponse;
+import com.groupdocs.sdk.java.samples.Examples;
 import com.sun.jersey.multipart.FormDataMultiPart;
 import com.sun.jersey.multipart.file.FileDataBodyPart;
 import com.wordnik.swagger.runtime.common.APIInvoker;
@@ -54,13 +55,8 @@ public class Examples {
 	// multipart file upload
 	private static void uploadFile() throws Exception {
 		StorageAPI.setApiInvoker(apiInvoker);
-		InputStream postData = Examples.class.getClassLoader().getResourceAsStream("com/groupdocs/sdk/java/samples/test.docx");
-		FormDataMultiPart requestBody = new FormDataMultiPart();
-		requestBody.field("stream", postData, MediaType.APPLICATION_OCTET_STREAM_TYPE);
-		// alternative way
-//		requestBody.bodyPart(new FileDataBodyPart("stream", new File(Examples.class.getClassLoader().getResource("com/groupdocs/sdk/java/samples/test.docx").toURI())));
-
-		UploadResponse response = StorageAPI.Upload(userId, "test.docx", "test DOC file ", requestBody);
+		File postData = new File(Examples.class.getClassLoader().getResource("com/groupdocs/sdk/java/samples/test.docx").toURI());
+		UploadResponse response = StorageAPI.Upload(userId, "test.docx", "test DOC file ", postData);
 		System.out.println(mapper.writeValueAsString(response));
 	}
 

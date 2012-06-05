@@ -266,7 +266,7 @@ public class EndpointOperation {
 							arguments.add(anArgument);
 						}else if (modelField.getParamType().equalsIgnoreCase(PARAM_TYPE_BODY)) {
 							if(modelField.getName() != null && modelField.getName().equalsIgnoreCase("stream")){
-								anArgument.setDataType("com.sun.jersey.multipart.FormDataMultiPart");
+								anArgument.setDataType("java.io.File");
 							} else {
 								anArgument.setDataType(dataTypeMapper.getClassType(modelField.getDataType(), false));
 							}

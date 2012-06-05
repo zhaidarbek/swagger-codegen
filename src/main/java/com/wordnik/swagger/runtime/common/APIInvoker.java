@@ -16,6 +16,7 @@
 
 package com.wordnik.swagger.runtime.common;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.String;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
 import com.wordnik.swagger.runtime.exception.APIException;
@@ -40,6 +42,7 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.WebResource.Builder;
 import com.sun.jersey.api.client.filter.LoggingFilter;
+import com.sun.jersey.multipart.file.DefaultMediaTypePredictor;
 
 
 /**
@@ -191,15 +194,15 @@ public class APIInvoker {
 
 
         //set the required HTTP headers
-        boolean isMultipart = false;
-        String contentType;
+        boolean isFileUpload = false;
+        MediaType contentType;
         if(postData == null) {
-        	contentType = "text/html";
+        	contentType = MediaType.TEXT_HTML_TYPE;
         } else {
-        	contentType = "application/json";
-        	if(postData instanceof com.sun.jersey.multipart.MultiPart){
-        		isMultipart = true;
-        		contentType = "multipart/form-data";
+        	contentType = MediaType.APPLICATION_JSON_TYPE;
+        	if(postData instanceof File){
+        		isFileUpload = true;
+        		contentType = DefaultMediaTypePredictor.CommonMediaTypes.getMediaTypeFromFile((File)postData);
         	}
         }
         
@@ -217,9 +220,9 @@ public class APIInvoker {
         if(method.equals(GET)) {
         	clientResponse =  builder.get(ClientResponse.class);
         }else if (method.equals(POST)) {
-        	clientResponse =  builder.post(ClientResponse.class, isMultipart ? postData : serialize(postData));
+        	clientResponse =  builder.post(ClientResponse.class, isFileUpload ? postData : serialize(postData));
         }else if (method.equals(PUT)) {
-        	clientResponse =  builder.put(ClientResponse.class, isMultipart ? postData : serialize(postData));
+        	clientResponse =  builder.put(ClientResponse.class, isFileUpload ? postData : serialize(postData));
         }else if (method.equals(DELETE)) {
         	clientResponse =  builder.delete(ClientResponse.class);
         }

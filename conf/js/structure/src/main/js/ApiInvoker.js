@@ -22,13 +22,6 @@ var ApiInvoker = new function() {
                     this.apiKey = apiKey;
                     this.authToken = authToken;
                     this.loggingEnabled = (loggingEnabled === null) ? false : loggingEnabled;
-
-                    if(this.apiKey)
-                        this.requestHeader.api_key = this.apiKey;
-
-                    if(this.authToken)
-                        this.requestHeader.auth_token = this.authToken;
-
                     this.trace(this.requestHeader);
                 }
             },
@@ -79,10 +72,10 @@ var ApiInvoker = new function() {
                     //         }, responseDataType).complete(this.showCompleteStatus).error(this.showErrorStatus);
                    ajaxRequest =  $.ajax({
                        url: callURL,
-                       data: JSON.stringify(postObject),
+                       data: queryParams,
                        type: "GET",
-                       dataType: "jsonp",
-                       contentType: "application/json",
+                       dataType: "json",
+                       contentType: "text/html",
                        beforeSend: function(xhr, s){
                            s.url = ApiInvoker.sign(s.url);
                        },
@@ -93,20 +86,43 @@ var ApiInvoker = new function() {
                 } else if (method == "POST") {
                     this.trace("sending post");
                     this.trace(JSON.stringify(postObject));
-                    ajaxRequest =  $.ajax({
-                        url: callURL,
-                        data: JSON.stringify(postObject),
-                        type: "POST",
-                        dataType: "json",
-                        contentType: "application/json",
-                        headers: this.requestHeader,
-                        beforeSend: function(xhr, s){
-                            s.url = ApiInvoker.sign(s.url);
-                        },
-                        success: function(response) {
-                            ApiInvoker.fire(completionEvent, returnType, requestId, response, callback);
-                        }
-                    }).complete(this.showCompleteStatus).error(this.showErrorStatus);
+                    var fileInput = postObject[0];
+                    if(postObject instanceof jQuery && !$.isPlainObject(postObject) && fileInput){
+                    	// file upload
+                    	var fakeForm = $("<form/>");
+                		fakeForm.fileupload({
+						    url: callURL,
+						    // forceIframeTransport: true,
+						    multipart: false
+						});
+
+						var args = {};
+						if(fileInput.files !== undefined){
+							this.trace("browser supports File API");
+							args.files = fileInput.files;
+						} else {
+							this.trace("we are in dark ages, using iframe hack which is always multipart");
+							args.files = [{name: "stream"}];
+							args.fileInput = form;
+						}
+
+						fakeForm.fileupload('send', args).complete(this.showCompleteStatus).error(this.showErrorStatus);
+                    } else {
+	                    ajaxRequest =  $.ajax({
+	                        url: callURL,
+	                        data: JSON.stringify(postObject),
+	                        type: "POST",
+	                        dataType: "json",
+	                        contentType: "application/json",
+	                        headers: this.requestHeader,
+	                        beforeSend: function(xhr, s){
+	                            s.url = ApiInvoker.sign(s.url);
+	                        },
+	                        success: function(response) {
+	                            ApiInvoker.fire(completionEvent, returnType, requestId, response, callback);
+	                        }
+	                    }).complete(this.showCompleteStatus).error(this.showErrorStatus);
+                    }
                 } else if (method == "PUT") {
                     ajaxRequest = $.ajax({
                         url: callURL,
