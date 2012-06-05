@@ -59,7 +59,7 @@ $if(!method.responseVoid)$
 	 * @throws APIException $method.exceptionDescription$
 	 */
 $if(method.hasArguments)$
-	 @MethodArgumentNames(value="$method.argumentNames; separator=", "$") 
+	 @MethodArgumentNames(value="$method.argumentNames; separator=", "$")
 $endif$
 
 	 public static $method.returnValue$ $method.name$($method.argumentDefinitions; separator=", "$) throws APIException {
@@ -87,8 +87,8 @@ $method.headerParameters:{ argument |
 		}
 }$
 
-$endif$		
-$if(method.inputModel)$		
+$endif$
+$if(method.inputModel)$
 $method.queryParameters:{ argument |
 		if( $argument.inputModelClassArgument$ != null && $argument.methodNameFromModelClass$ != null) {
 		 	queryParams.put("$argument.name$", APIInvoker.toPathValue($argument.methodNameFromModelClass$));
@@ -104,7 +104,9 @@ $method.headerParameters:{ argument |
 		 	headerParams.put("$argument.name$", APIInvoker.toPathValue($argument.methodNameFromModelClass$));
 		}
 }$
-$endif$	
+$endif$
+        resourcePath = resourcePath.replaceAll("\\\\{\\\w*\\\\}", "");
+
 		//make the API Call
 $if(method.postObject)$
 		String response = getApiInvoker().invokeAPI(resourcePath, method, queryParams, postData, headerParams);
@@ -122,7 +124,7 @@ $if(!method.returnValueList)$
 		//create output objects if the response has more than one object
 		$method.returnValue$ responseObject = ($method.returnValue$) getApiInvoker().deserialize(response, $method.returnClassName$.class);
 		return responseObject;
-$endif$		
+$endif$
 $if(method.returnValueList)$
         TypeReference<ArrayList<$method.returnClassName$>> typeRef = new TypeReference<ArrayList<$method.returnClassName$>>() {};
         try {
@@ -131,9 +133,9 @@ $if(method.returnValueList)$
         } catch (IOException ioe) {
         	String[] args = new String[]{response, typeRef.toString()};
             throw new APIException(APIExceptionCodes.ERROR_CONVERTING_JSON_TO_JAVA, args, "Error in converting response json value to java object : " + ioe.getMessage(), ioe);
-        }		
-$endif$		
-$endif$		
+        }
+$endif$
+$endif$
 	 }
 
 }$
@@ -150,3 +152,4 @@ $endif$
     }
 
 }
+

@@ -44,6 +44,7 @@ $if(method.authToken)$
             //parse inputs
             var resourcePath = "$method.resourcePath$";
             resourcePath = resourcePath.replace("{format}","json");
+            resourcePath = resourcePath.replace(/\*/g, "");
             var method = "$method.methodType$";
             var queryParams = new Object();
 $if(!method.inputModel)$

@@ -8,10 +8,12 @@ import sys
 import os
 import re
 import urllib
+import urlparse
 import urllib2
 import httplib
 import json
 import hmac
+import mimetypes
 
 from hashlib import sha1
 from base64 import b64encode
@@ -39,7 +41,15 @@ class APIClient:
             for param, value in headerParams.iteritems():
                 headers[param] = value
 
-        headers['Content-type'] = 'application/json' if postData else 'text/html'
+        filename = False
+        if not postData:
+            headers['Content-type'] = 'text/html'
+        elif postData.startswith('file://'):
+            filename = postData[7:len(postData)]
+            headers['Content-type'] = mimetypes.guess_type(filename)[0] or 'application/octet-stream'
+            headers['Content-Length'] = str(os.path.getsize(filename))
+        else:
+            headers['Content-type'] = 'application/json'
 
         data = None
         if method == 'GET':
@@ -53,9 +63,12 @@ class APIClient:
             request = urllib2.Request(url=self.sign(url), headers=headers)
         elif method in ['POST', 'PUT', 'DELETE']:
             data = postData
-            if data:
-                if type(postData) not in [str, int, float, bool]:
-                    data = json.dumps(self.serialize(postData))
+            if filename:
+                data = open(filename, "rb")
+            elif data and type(postData) not in [str, int, float, bool]:
+                data = json.dumps(self.serialize(postData))
+                print(data)
+
             request = urllib2.Request(url=self.sign(url), headers=headers, data=data)
             if method in ['PUT', 'DELETE']:
                 # Monkey patch alert! Urllib2 doesn't really do PUT / DELETE
@@ -83,9 +96,10 @@ class APIClient:
             string -- json serialization of object
         """
         if type(obj) == list:
-            return ','.join(obj)
+            return urllib.quote(','.join(obj))
         else:
-            return obj
+            print obj
+            return urllib.quote(obj)
 
     def deserialize(self, obj, objClass):
         """Derialize a JSON string into an object.
@@ -166,10 +180,11 @@ class APIClient:
         return props
 
     def sign(self, url):
-        urlParts = urllib2.urlparse.urlparse(url)
-        signed = hmac.new(self.privateKey.encode('utf-8'), (urlParts.path + urlParts.query).encode('utf-8'), sha1)
+        urlParts = urlparse.urlparse(url)
+        pathAndQuery = (urlParts.path + ('?' + urlParts.query if urlParts.query else urlParts.query)).replace(" ", "%20")
+        signed = hmac.new(self.privateKey.encode('utf-8'), pathAndQuery.encode('utf-8'), sha1)
         signature = b64encode(signed.digest()).decode('utf-8').replace('=', '')
-        url = url + ('&' if urlParts.query else '?') + "signature=" + urllib2.quote(signature)
+        url = url + ('&' if urlParts.query else '?') + "signature=" + urllib.quote(signature)
         print(url)
         return url
 

@@ -22,14 +22,14 @@ include_once( dirname(__FILE__).'/../StorageAPI.php');
     // $reply = new AnnotationReplyInfo();
     // $reply->Message = "sent from php client";
     // $postData->Replies = array($reply);
-    // $response = $api->CreateAnnotation($userId, $postData, $fileId);
+    // $response = $api->CreateAnnotation($userId, $fileId, $postData);
 	// print_r($response);
 
-	$response = $api->ListAnnotations($userId, $fileId);
+	// $response = $api->ListAnnotations($userId, $fileId);
 
 	// test file upload
 	$api = new StorageAPI($apiClient);
-	$api->Upload($userId, "test.docx", "uploaded from php library", array("stream" => "@".dirname(__FILE__)."/test.docx"));
+	$api->Upload($userId, "test.docx", "uploaded", "file://".dirname(__FILE__)."/test.docx");
 
 ?>
 

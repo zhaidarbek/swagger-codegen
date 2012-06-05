@@ -50,11 +50,14 @@ class APIClient {
 
 		$headers = array();
 
+		$filename = false;
 		if (empty($postData)){
 			$headers[] = "Content-type: text/html";
 
-		} else if (is_array($postData) && count($postData) == 1 && array_key_exists("stream", $postData)) {
-			$headers[] = "Content-type: multipart/form-data";
+		} else if (is_string($postData) && strpos($postData, "file://") === 0) {
+			$filename = substr($postData, 7);
+			$headers[] = "Content-type: ".mime_content_type($filename);
+			$headers[] = "Content-Length: ".filesize($filename);
 
 		} else if (is_object($postData) or is_array($postData)) {
 			$headers[] = "Content-type: application/json";
@@ -85,16 +88,23 @@ class APIClient {
 				$url = ($url . '?' . http_build_query($queryParams));
 			}
 		} else if ($method == self::$POST) {
+			if($filename){
+				curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+				curl_setopt($curl, CURLOPT_TIMEOUT, 0);
+				curl_setopt($curl, CURLOPT_PUT, true);
+				curl_setopt($curl, CURLOPT_INFILE, fopen($filename, "rb"));
+				curl_setopt($curl, CURLOPT_INFILESIZE, filesize($filename));
+			} else {
 				curl_setopt($curl, CURLOPT_POST, true);
 				curl_setopt($curl, CURLOPT_POSTFIELDS, $postData);
-			} else if ($method == self::$PUT) {
-				$json_data = json_encode($postData);
-				curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
-				curl_setopt($curl, CURLOPT_POSTFIELDS, $postData);
-			} else if ($method == self::$DELETE) {
-				curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
-				curl_setopt($curl, CURLOPT_POSTFIELDS, $postData);
-			} else {
+			}
+		} else if ($method == self::$PUT) {
+			curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
+			curl_setopt($curl, CURLOPT_POSTFIELDS, $postData);
+		} else if ($method == self::$DELETE) {
+			curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+			curl_setopt($curl, CURLOPT_POSTFIELDS, $postData);
+		} else {
 			throw new Exception('Method ' . $method . ' is not recognized.');
 		}
 

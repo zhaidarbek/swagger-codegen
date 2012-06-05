@@ -25,8 +25,8 @@
                         "id" : 1,
                         "resourceId" : 1,
                         "input" : {
-                            "userId":"2721ad21bcf0d71e",
-                            "fileId":"d16aeca842c8955a9834911e5a62ca2f120f5a2a7bf7dc7952a2a092cd15277c"
+                            "userId":"<REPLACE>",
+                            "fileId":"<REPLACE>"
                         },
 		                "assertions" : [
                             {
@@ -41,8 +41,8 @@
                         "id" : 2,
                         "resourceId" : 2,
                         "input" : {
-                            "userId":"2721ad21bcf0d71e",
-                            "fileId":"d16aeca842c8955a9834911e5a62ca2f120f5a2a7bf7dc7952a2a092cd15277c",
+                            "userId":"<REPLACE>",
+                            "fileId":"<REPLACE>",
 							"postData" : "${input.annotationInfoList[0]}"
                         },
 		                "assertions" : [
@@ -58,7 +58,3 @@
     ]
 }
 
-
-
-
-	    
