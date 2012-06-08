@@ -124,6 +124,7 @@ $if(!method.returnValueList)$
 		//create output objects if the response has more than one object
 		$method.returnValue$ responseObject = ($method.returnValue$) getApiInvoker().deserialize(response, $method.returnClassName$.class);
 		return responseObject;
+
 $endif$
 $if(method.returnValueList)$
         TypeReference<ArrayList<$method.returnClassName$>> typeRef = new TypeReference<ArrayList<$method.returnClassName$>>() {};
@@ -136,7 +137,7 @@ $if(method.returnValueList)$
         }
 $endif$
 $endif$
-	 }
+	}
 
 }$
 
