@@ -1,10 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.groupdocs</groupId>
-	<artifactId>groupdocs-java-client</artifactId>
+	<groupId>com.dynabic</groupId>
+	<artifactId>dynabic-java-client</artifactId>
 	<packaging>jar</packaging>
-	<name>GroupDocsJavaClient</name>
+	<name>DynabicJavaClient</name>
 	<version>1.0</version>
 
 	<pluginRepositories>
@@ -183,7 +183,7 @@
 	<dependencies>
     <dependency>
       <groupId>swagger-codegen</groupId>
-      <artifactId>groupdocs-swagger-codegen</artifactId>
+      <artifactId>swagger-codegen</artifactId>
       <version>2.9.1-1.2</version>
       <scope>system</scope>
       <systemPath>${basedir}/lib/swagger-codegen.jar</systemPath>

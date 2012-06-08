@@ -39,6 +39,7 @@ public class JavaDataTypeMappingProvider implements DataTypeMappingProvider {
         primitiveValueMap.put("int", "int");
         primitiveValueMap.put("integer", "int");
         primitiveValueMap.put("Integer", "int");
+        primitiveValueMap.put("bool", "boolean");
         primitiveValueMap.put("boolean", "boolean");
         primitiveValueMap.put("Boolean", "boolean");
         primitiveValueMap.put("long", "long");
@@ -60,6 +61,7 @@ public class JavaDataTypeMappingProvider implements DataTypeMappingProvider {
         primitiveObjectMap.put("integer", "Integer");
         primitiveObjectMap.put("Integer", "Integer");
         primitiveObjectMap.put("java.lang.Integer", "Integer");
+        primitiveObjectMap.put("bool", "Boolean");
         primitiveObjectMap.put("boolean", "Boolean");
         primitiveObjectMap.put("Boolean", "Boolean");
         primitiveObjectMap.put("java.lang.Boolean", "Boolean");

@@ -220,21 +220,47 @@ public class APIInvoker {
         if(method.equals(GET)) {
         	clientResponse =  builder.get(ClientResponse.class);
         }else if (method.equals(POST)) {
-        	clientResponse =  builder.post(ClientResponse.class, isFileUpload ? postData : serialize(postData));
+        	Object requestBody;
+        	if(isFileUpload){
+        		requestBody = postData;
+        	} else {
+        		requestBody = serialize(postData);
+                signRequestBody(headerMap, builder, requestBody);
+        	}
+        	clientResponse =  builder.post(ClientResponse.class, requestBody);
         }else if (method.equals(PUT)) {
-        	clientResponse =  builder.put(ClientResponse.class, isFileUpload ? postData : serialize(postData));
+        	Object requestBody;
+        	if(isFileUpload){
+        		requestBody = postData;
+        	} else {
+        		requestBody = serialize(postData);
+        		signRequestBody(headerMap, builder, requestBody);
+        	}
+        	clientResponse =  builder.put(ClientResponse.class, requestBody);
         }else if (method.equals(DELETE)) {
         	clientResponse =  builder.delete(ClientResponse.class);
         }
         
         //process the response
-        if(clientResponse.getClientResponseStatus() == ClientResponse.Status.OK) {
+        if(clientResponse.getClientResponseStatus() == ClientResponse.Status.OK
+        		|| clientResponse.getClientResponseStatus() == ClientResponse.Status.CREATED
+        		|| clientResponse.getClientResponseStatus() == ClientResponse.Status.ACCEPTED) {
 	        String response = clientResponse.getEntity(String.class);
 			return response;
         }else{
         	int responseCode = clientResponse.getClientResponseStatus().getStatusCode() ;
         	throw new APIException(responseCode, clientResponse.getEntity(String.class));
         }
+	}
+	
+	private void signRequestBody(Map<String, String> headerMap, Builder builder, Object requestBody) {
+		if(securityHandler != null){
+			headerMap.clear();
+		    securityHandler.populateSecurityInfo(new StringBuilder((String)requestBody), headerMap);
+		    for(String key : headerMap.keySet()){
+		        builder.header(key, headerMap.get(key));
+		    }
+		}
 	}
 	
 	/**

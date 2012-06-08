@@ -78,19 +78,20 @@ public class CamelCaseNamingPolicyProvider implements NamingPolicyProvider {
      */
     public String getServiceName(String resourcePath) {
          String className = null;
-         int index = resourcePath.indexOf(".{format}");
-         if(index >= 0) {
-             String resourceName = resourcePath.substring(1,index);
-             className = applyClassNamingPolicy(resourceName);
-         }else{
-             String[] paths = resourcePath.split("/");
-             for(String path : paths) {
-                 if(path != null && path.length() > 0) {
-                     className = applyClassNamingPolicy(path);
-                     break;
-                 }
+         String[] paths = resourcePath.split("/");
+         for(String path : paths) {
+             if(path != null && path.length() > 0) {
+                 className = applyClassNamingPolicy(path);
+                 break;
              }
          }
+//         if (className == null){
+//            int index = resourcePath.indexOf(".{format}");
+//            if(index >= 0) {
+//                String resourceName = resourcePath.substring(1,index);
+//                className = applyClassNamingPolicy(resourceName);
+//            } 
+//         }
          return className+ "API";
     }
 

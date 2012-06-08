@@ -20,7 +20,7 @@ import com.wordnik.swagger.codegen.config.java.JavaDataTypeMappingProvider;
 import com.wordnik.swagger.runtime.annotations.MethodArgumentNames;
 import com.wordnik.swagger.codegen.config.common.CamelCaseNamingPolicyProvider;
 import com.wordnik.swagger.runtime.common.APIInvoker;
-import com.wordnik.swagger.runtime.common.GroupDocsUrlSigningSecurityHandler;
+import com.wordnik.swagger.runtime.common.DynabicUrlSigningSecurityHandler;
 import com.wordnik.swagger.runtime.common.SecurityHandler;
 import com.wordnik.swagger.runtime.exception.APIException;
 import com.wordnik.swagger.runtime.exception.APIExceptionCodes;
@@ -77,7 +77,7 @@ public class JavaTestCaseExecutor {
         }
         queryAndPathParameters.put("authToken", authToken);
 
-        SecurityHandler securityHandler = new GroupDocsUrlSigningSecurityHandler(apiKey);
+        SecurityHandler securityHandler = new DynabicUrlSigningSecurityHandler("TODO", apiKey);
         APIInvoker aAPIInvoker = APIInvoker.initialize(securityHandler, apiServer, true);
 
         runner.executeTestCase(resource, servicePackageName, suggestedMethodName, queryAndPathParameters, postData);
