@@ -1,48 +1,30 @@
-
 import sys
 import os
 import hmac
 
-from AntAPI import AntAPI
-from APIClient import APIClient
-
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
-import model
+from api.CustomersAPI import CustomersAPI
+from api.APIClient import APIClient
+from model.CustomerRequest import CustomerRequest
 
 
-def listAnnotations():
-    response = AntAPI(apiClient).ListAnnotations(userId, fileId)
-    print(response.Status)
-
-def createAnnotation():
-    box = Rectangle()
-    box.X = 100
-    box.Y = 100
-    box.Width = 100
-    box.Height = 100
-    reply = AnnotationReplyInfo()
-    reply.Message = "Test message from python client"
-    postData = AnnotationInfo()
-    postData.Type = "0"
-    postData.Box = box
-    postData.Replies = [reply]
-
-    response = AntAPI(apiClient).CreateAnnotation(userId, fileId, postData)
-    print(response.Status)
-
-def uploadFile():
-    postData = "file://" + os.path.dirname(os.path.abspath(__file__)) + "/test.docx"
-    response = StorageAPI(apiClient).Upload(userId, "python/test.docx", "uploaded from python client library", postData)
-    print(response)
+def getCustomer(customerId):
+    response = CustomersAPI(apiClient).GetCustomer(customerId)
+    print(apiClient.serialize(response))
+    
+def addCustomer():
+    postData = CustomerRequest()
+    postData.first_name = "John"
+    postData.last_name = "Doe"
+    postData.email = "hopefullysome@nonexisting.email"
+    response = CustomersAPI(apiClient).AddCustomer("test", postData)
+    print(apiClient.serialize(response))
 
 
 if __name__ == '__main__':
-    privateKey = "<PRIVATE_KEY>"
-    userId = "<CLIENT_ID>"
-    fileId = "<FILE_ID>"
-    apiClient = APIClient(privateKey, "https://dev-api.groupdocs.com/v2.0")
+    privateKey = "19c7a0d97d2d4413aba5"
+    clientKey = "19c7a0d97d2d4413aba5";
+    apiServer = "http://stage-api.dynabic.com/billing";
+    apiClient = APIClient(privateKey, clientKey, apiServer)
 
-#    createAnnotation()
-#    listAnnotations()
-    uploadFile()
-
+#    getCustomer("14")
+    addCustomer()

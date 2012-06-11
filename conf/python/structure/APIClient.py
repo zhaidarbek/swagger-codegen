@@ -25,11 +25,13 @@ import model
 class APIClient:
     """Generic API client for Swagger client library builds"""
 
-    def __init__(self, privateKey=None, apiServer=None):
+    def __init__(self, privateKey=None, clientKey=None, apiServer=None):
         if privateKey == None:
-            raise Exception('You must pass an privateKey when instantiating the '
-                            'APIClient')
+            raise Exception('You must pass a privateKey when instantiating the APIClient')
+        if clientKey == None:
+            raise Exception('You must pass a clientKey when instantiating the APIClient')
         self.privateKey = privateKey
+        self.clientKey = clientKey
         self.apiServer = apiServer
 
     def callAPI(self, resourcePath, method, queryParams, postData,
@@ -44,7 +46,7 @@ class APIClient:
         filename = False
         if not postData:
             headers['Content-type'] = 'text/html'
-        elif postData.startswith('file://'):
+        elif isinstance(postData, str) and postData.startswith('file://'):
             filename = postData[7:len(postData)]
             headers['Content-type'] = mimetypes.guess_type(filename)[0] or 'application/octet-stream'
             headers['Content-Length'] = str(os.path.getsize(filename))
@@ -67,7 +69,9 @@ class APIClient:
                 data = open(filename, "rb")
             elif data and type(postData) not in [str, int, float, bool]:
                 data = json.dumps(self.serialize(postData))
-                print(data)
+            if method in ['PUT', 'POST']:
+                headers['clientkey'] = self.clientKey
+                headers['signature'] = self.signRequestBody(data)
 
             request = urllib2.Request(url=self.sign(url), headers=headers, data=data)
             if method in ['PUT', 'DELETE']:
@@ -82,7 +86,6 @@ class APIClient:
 
         try:
             data = json.loads(response)
-            print data
         except ValueError: # PUT requests don't return anything
             data = None
 
@@ -98,7 +101,6 @@ class APIClient:
         if type(obj) == list:
             return urllib.quote(','.join(obj))
         else:
-            print obj
             return urllib.quote(obj)
 
     def deserialize(self, obj, objClass):
@@ -181,10 +183,18 @@ class APIClient:
 
     def sign(self, url):
         urlParts = urlparse.urlparse(url)
-        pathAndQuery = (urlParts.path + ('?' + urlParts.query if urlParts.query else urlParts.query)).replace(" ", "%20")
-        signed = hmac.new(self.privateKey.encode('utf-8'), pathAndQuery.encode('utf-8'), sha1)
-        signature = b64encode(signed.digest()).decode('utf-8').replace('=', '')
-        url = url + ('&' if urlParts.query else '?') + "signature=" + urllib.quote(signature)
-        print(url)
+        url = url + ('&' if urlParts.query else '?') + "clientkey=" + self.clientKey
+        signed = hmac.new(self.privateKey.encode('utf-8'), url.lower().encode('utf-8'), sha1)
+        signature = b64encode(signed.digest()).decode('utf-8')
+        if signature.endswith("="):
+            signature = signature[0 : (len(signature) - 1)]
+        
+        url = url + "&signature=" + signature.replace("+", "-").replace("/", "_")
         return url
 
+    def signRequestBody(self, body):
+        signed = hmac.new(self.privateKey.encode('utf-8'), body.lower().encode('utf-8'), sha1)
+        signature = b64encode(signed.digest()).decode('utf-8')
+        if signature.endswith("="):
+            signature = signature[0 : (len(signature) - 1)]
+        return signature.replace("+", "-").replace("/", "_")
