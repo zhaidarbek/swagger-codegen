@@ -1,35 +1,22 @@
 <?php
 
 include_once( dirname(__FILE__).'/../APIClient.php');
-include_once( dirname(__FILE__).'/../AntAPI.php');
-include_once( dirname(__FILE__).'/../StorageAPI.php');
+include_once( dirname(__FILE__).'/../CustomersAPI.php');
 
-    $privateKey = "<PRIVATE_KEY>";
-	$userId = "<CLIENT_ID>";
-	$fileId = "<FILE_ID>";
-	$apiClient = new APIClient($privateKey, "https://dev-api.groupdocs.com/v2.0");
+    $privateKey = "<PASTE_HERE>";
+	$clientKey = "<PASTE_HERE>";
+	$apiClient = new APIClient($privateKey, $clientKey, "http://stage-api.dynabic.com/billing");
 
-	$api = new AntAPI($apiClient);
+	// GET
+	$api = new CustomersAPI($apiClient);
+	// $api->GetCustomer("14");
 
-    // $postData = new AnnotationInfo();
-    // $postData->Type = "0";
-    // $box = new Rectangle();
-    // $box->Height = 200;
-    // $box->Width = 200;
-    // $box->X = 200;
-    // $box->Y = 200;
-    // $postData->Box = $box;
-    // $reply = new AnnotationReplyInfo();
-    // $reply->Message = "sent from php client";
-    // $postData->Replies = array($reply);
-    // $response = $api->CreateAnnotation($userId, $fileId, $postData);
-	// print_r($response);
-
-	// $response = $api->ListAnnotations($userId, $fileId);
-
-	// test file upload
-	$api = new StorageAPI($apiClient);
-	$api->Upload($userId, "test.docx", "uploaded", "file://".dirname(__FILE__)."/test.docx");
+	// POST
+	$postData = new CustomerRequest();
+	$postData->first_name = "John";
+	$postData->last_name = "Doe";
+	$postData->email = "hopefullysome@nonexisting.email";
+	$api->AddCustomer("test", $postData);
 
 ?>
 

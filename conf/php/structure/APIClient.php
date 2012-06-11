@@ -31,8 +31,9 @@ class APIClient {
 	 * @param string $privateKey your Private key
 	 * @param string $apiServer the address of the API server
 	 */
-	function __construct($privateKey, $apiServer) {
+	function __construct($privateKey, $clientKey, $apiServer) {
 		$this->privateKey = $privateKey;
+		$this->clientKey = $clientKey;
 		$this->apiServer = $apiServer;
 	}
 
@@ -78,10 +79,9 @@ class APIClient {
 
 		$curl = curl_init();
 		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($curl, CURLOPT_TIMEOUT, 5);
+		curl_setopt($curl, CURLOPT_TIMEOUT, 0);
 		// return the result on success, rather than just TRUE
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 
 		if ($method == self::$GET) {
 			if (! empty($queryParams)) {
@@ -97,6 +97,8 @@ class APIClient {
 			} else {
 				curl_setopt($curl, CURLOPT_POST, true);
 				curl_setopt($curl, CURLOPT_POSTFIELDS, $postData);
+				$headers[] = "clientkey: ".$this->clientKey;
+				$headers[] = "signature: ".self::signRequestBody($postData);
 			}
 		} else if ($method == self::$PUT) {
 			curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
@@ -108,6 +110,7 @@ class APIClient {
 			throw new Exception('Method ' . $method . ' is not recognized.');
 		}
 
+		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($curl, CURLOPT_URL, self::sign($url));
 
 		// Make the request
@@ -121,7 +124,7 @@ class APIClient {
 		if ($response_info['http_code'] == 0) {
 			throw new Exception("TIMEOUT: api call to " . $url .
 				" took more than 5s to return" );
-		} else if ($response_info['http_code'] == 200) {
+		} else if (in_array($response_info['http_code'], array(200, 201, 202))) {
 			$data = json_decode($response);
 		} else if ($response_info['http_code'] == 401) {
 			throw new Exception("Unauthorized API request to " . $url .
@@ -229,16 +232,25 @@ class APIClient {
 
 	public function sign($url) {
 		$urlParts = parse_url($url);
-		$pathAndQuery = $urlParts['path'].(empty($urlParts['query']) ? "" : "?".$urlParts['query']);
-		$signature = base64_encode(hash_hmac("sha1", $pathAndQuery, $this->privateKey, true));
+		$url = $url . (empty($urlParts['query']) ? "?" : "&") . "clientkey=" . $this->clientKey;
+		$signature = base64_encode(hash_hmac("sha1", strtolower($url), $this->privateKey, true));
 		if(substr($signature, -1) == '='){
 			$signature = substr($signature, 0, - 1);
 		}
-		$url = $url . (empty($urlParts['query']) ? '?' : '&') . 'signature=' . rawurlencode($signature);
+		$url = $url . '&signature=' . str_replace("+", "-", str_replace("/", "_", $signature));
 		return $url;
+	}
+
+	public function signRequestBody($body) {
+		$signature = base64_encode(hash_hmac("sha1", strtolower($body), $this->privateKey, true));
+		if(substr($signature, -1) == '='){
+			$signature = substr($signature, 0, - 1);
+		}
+		return str_replace("+", "-", str_replace("/", "_", $signature));
 	}
 
 }
 
 
 ?>
+
