@@ -260,21 +260,24 @@ var ApiInvoker = new function() {
             this.sign = function(url) {
 				var urlParts = this.splitUrl(url);
 				var sha = new jsSHA(urlParts.pathAndQuery, "ASCII");
-				var hash = sha.getHMAC(this.apiKey, "ASCII", "B64");
-				var signature = encodeURIComponent(hash);
+				var signature = sha.getHMAC(this.apiKey, "ASCII", "B64");
+				if(signature.substr(-1) === "="){
+				   signature = signature.substr(0, signature.length-1);
+				}
+				signature = encodeURIComponent(signature);
 				return url +
 				    (urlParts.query == null || urlParts.query.length == 0 ? '?' : '&') +
 				    "signature=" + signature;
             },
-		
+
 		    this.splitUrl = (function () {
 		        var regex = new RegExp("(\\w+)://([^/]+)([^\?]*)([\?].+)?");
-		
+
 		        return function (url) {
 		            var matches = url.match(regex);
 		            var path = (matches.length > 3 ? matches[3] : null);
 		            var query = (matches.length > 4 ? matches[4] : null);
-		
+
 		            return {
 		                "schema": matches[1],
 		                "authority": (matches.length > 2 ? matches[2] : null),
@@ -286,3 +289,4 @@ var ApiInvoker = new function() {
 		    })()
 
 };
+

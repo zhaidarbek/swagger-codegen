@@ -39,7 +39,10 @@ public class GroupDocsUrlSigningSecurityHandler implements SecurityHandler {
 			Mac mac = Mac.getInstance(SIGN_ALG);
 			mac.init(new SecretKeySpec(privateKey.getBytes(ENC), SIGN_ALG));
 			String signature = new String(Base64.encode(mac.doFinal(toSign.getBytes(ENC))), ENC);
-			return encode(signature.replace("=", ""));
+			if(signature.endsWith("=")){
+				signature = signature.substring(0, signature.length() - 1);
+			}
+			return encode(signature);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		} catch (NoSuchAlgorithmException e) {

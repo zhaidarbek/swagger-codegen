@@ -40,7 +40,7 @@ class APIClient3:
         filename = False
         if not postData:
             headers['Content-type'] = 'text/html'
-        elif postData.startswith('file://'):
+        elif isinstance(postData, str) and postData.startswith('file://'):
             filename = postData[7:len(postData)]
             headers['Content-type'] = mimetypes.guess_type(filename)[0] or 'application/octet-stream'
             headers['Content-Length'] = str(os.path.getsize(filename))
@@ -178,7 +178,9 @@ class APIClient3:
         urlParts = urllib.parse.urlparse(url)
         pathAndQuery = (urlParts.path + ('?' + urlParts.query if urlParts.query else urlParts.query)).replace(" ", "%20")
         signed = hmac.new(self.privateKey.encode('utf-8'), pathAndQuery.encode('utf-8'), sha1)
-        signature = b64encode(signed.digest()).decode('utf-8').replace('=', '')
+        signature = b64encode(signed.digest()).decode('utf-8')
+        if signature.endswith("="):
+            signature = signature[0 : (len(signature) - 1)]
         url = url + ('&' if urlParts.query else '?') + "signature=" + urllib.parse.quote(signature)
         return url
 
