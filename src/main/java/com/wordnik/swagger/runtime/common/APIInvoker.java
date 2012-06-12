@@ -238,7 +238,14 @@ public class APIInvoker {
         	}
         	clientResponse =  builder.put(ClientResponse.class, requestBody);
         }else if (method.equals(DELETE)) {
-        	clientResponse =  builder.delete(ClientResponse.class);
+        	Object requestBody;
+        	if(isFileUpload){
+        		requestBody = postData;
+        	} else {
+        		requestBody = serialize(postData);
+        		signRequestBody(headerMap, builder, requestBody);
+        	}
+        	clientResponse =  builder.delete(ClientResponse.class, requestBody);
         }
         
         //process the response

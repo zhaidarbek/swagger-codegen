@@ -103,9 +103,13 @@ class APIClient {
 		} else if ($method == self::$PUT) {
 			curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
 			curl_setopt($curl, CURLOPT_POSTFIELDS, $postData);
+			$headers[] = "clientkey: ".$this->clientKey;
+			$headers[] = "signature: ".self::signRequestBody($postData);
 		} else if ($method == self::$DELETE) {
 			curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
 			curl_setopt($curl, CURLOPT_POSTFIELDS, $postData);
+			$headers[] = "clientkey: ".$this->clientKey;
+			$headers[] = "signature: ".self::signRequestBody($postData);
 		} else {
 			throw new Exception('Method ' . $method . ' is not recognized.');
 		}

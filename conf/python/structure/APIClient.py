@@ -69,9 +69,8 @@ class APIClient:
                 data = open(filename, "rb")
             elif data and type(postData) not in [str, int, float, bool]:
                 data = json.dumps(self.serialize(postData))
-            if method in ['PUT', 'POST']:
-                headers['clientkey'] = self.clientKey
-                headers['signature'] = self.signRequestBody(data)
+            headers['clientkey'] = self.clientKey
+            headers['signature'] = self.signRequestBody(data)
 
             request = urllib2.Request(url=self.sign(url), headers=headers, data=data)
             if method in ['PUT', 'DELETE']:
@@ -188,7 +187,7 @@ class APIClient:
         signature = b64encode(signed.digest()).decode('utf-8')
         if signature.endswith("="):
             signature = signature[0 : (len(signature) - 1)]
-        
+
         url = url + "&signature=" + signature.replace("+", "-").replace("/", "_")
         return url
 
@@ -198,3 +197,4 @@ class APIClient:
         if signature.endswith("="):
             signature = signature[0 : (len(signature) - 1)]
         return signature.replace("+", "-").replace("/", "_")
+
