@@ -29,4 +29,5 @@ cp conf/java/sample/pom.xml $4/
 cp conf/java/sample/lib-test-* $4/conf
 cp bin/runjavaTestCase.sh bin/test-java-lib.sh $4/bin
 cp target/swagger-codegen*.jar $4/lib/swagger-codegen.jar
+cp -r conf/java/sample/com $4/src/main/java
 
