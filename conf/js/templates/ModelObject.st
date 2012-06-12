@@ -10,12 +10,12 @@ $fields:{ field |
  * $if(field.required)$@Required$endif$
  * $if(field.allowableValues)$[AllowableValues(value="$field.allowedValuesString$"]$endif$
  */
- this.$field.fieldDefinition.name$ = null;$\r$}$
+ this.$field.fieldDefinition.name$ = undefined;$\r$}$
 
 
 this.parse = function(data) {
     if(data) {
-    
+
 $fields:{ field |
 $! //$field.fieldDefinition.returnType$ (primitive=$field.fieldDefinition.hasPrimitiveType$) !$
 $if(field.fieldDefinition.hasListResponse)$

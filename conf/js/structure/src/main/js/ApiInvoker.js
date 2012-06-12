@@ -1,7 +1,7 @@
 var ApiInvoker = new function() {
     this.apiServer = null,
-    this.authToken = null,
-    this.apiKey = null,
+    this.clientKey = null,
+    this.privateKey = null,
     this.loggingEnabled = false,
     this.requestHeader = new Object(),
 
@@ -13,25 +13,24 @@ var ApiInvoker = new function() {
                 if (window.console) console.log(obj);
             },
 
-            this.init = function(apiServer, apiKey, authToken, loggingEnabled) {
+            this.init = function(apiServer, privateKey, clientKey, loggingEnabled) {
                 if (apiServer != null && apiServer.length > 0) {
                     if (apiServer.substring(apiServer.length - 1) == ("/")) {
                         apiServer = apiServer.substring(0, apiServer.length - 1);
                     }
                     this.apiServer = apiServer;
-                    this.apiKey = apiKey;
-                    this.authToken = authToken;
+                    this.privateKey = privateKey;
+                    this.clientKey = clientKey;
                     this.loggingEnabled = (loggingEnabled === null) ? false : loggingEnabled;
                     this.trace(this.requestHeader);
                 }
             },
 
-            this.invokeAPI = function(authToken, resourceURL, method, queryParams, postObject, completionEvent, requestId, returnType, callback) {
+            this.invokeAPI = function(resourceURL, method, queryParams, postObject, completionEvent, requestId, returnType, callback) {
                 if (this.apiServer == null) {
                     throw new Error("Please call ApiInvoker.init() to initialize the library");
                 }
 
-                this.trace("authToken = " + authToken);
                 this.trace("resourceURL = " + resourceURL);
                 this.trace("method = " + method);
 //        this.trace("returnType = " + returnType);
@@ -108,6 +107,7 @@ var ApiInvoker = new function() {
 
 						fakeForm.fileupload('send', args).complete(this.showCompleteStatus).error(this.showErrorStatus);
                     } else {
+                    	var thiz = this;
 	                    ajaxRequest =  $.ajax({
 	                        url: callURL,
 	                        data: JSON.stringify(postObject),
@@ -117,6 +117,8 @@ var ApiInvoker = new function() {
 	                        headers: this.requestHeader,
 	                        beforeSend: function(xhr, s){
 	                            s.url = ApiInvoker.sign(s.url);
+	                            xhr.setRequestHeader("clientkey", thiz.clientKey);
+	                            xhr.setRequestHeader("signature", thiz.signString(s.data, thiz.privateKey));
 	                        },
 	                        success: function(response) {
 	                            ApiInvoker.fire(completionEvent, returnType, requestId, response, callback);
@@ -124,28 +126,36 @@ var ApiInvoker = new function() {
 	                    }).complete(this.showCompleteStatus).error(this.showErrorStatus);
                     }
                 } else if (method == "PUT") {
+                	var thiz = this;
                     ajaxRequest = $.ajax({
                         url: callURL,
                         data: JSON.stringify(postObject),
                         type: "PUT",
                         dataType: "json",
                         contentType: "application/json",
+                        headers: this.requestHeader,
                         beforeSend: function(xhr, s){
                             s.url = ApiInvoker.sign(s.url);
+                            xhr.setRequestHeader("clientkey", thiz.clientKey);
+                            xhr.setRequestHeader("signature", thiz.signString(s.data, thiz.privateKey));
                         },
                         success: function(response) {
                             ApiInvoker.fire(completionEvent, returnType, requestId, response, callback);
                         }
                     }).complete(this.showCompleteStatus).error(this.showErrorStatus);
                 } else if (method == "DELETE") {
+                	var thiz = this;
                     ajaxRequest = $.ajax({
                         url: callURL,
                         data: JSON.stringify(postObject),
                         type: "DELETE",
                         dataType: "json",
                         contentType: "application/json",
+                        headers: this.requestHeader,
                         beforeSend: function(xhr, s){
                             s.url = ApiInvoker.sign(s.url);
+                            xhr.setRequestHeader("clientkey", thiz.clientKey);
+                            xhr.setRequestHeader("signature", thiz.signString(s.data, thiz.privateKey));
                         },
                         success: function(response) {
                             ApiInvoker.fire(completionEvent, returnType, requestId, response, callback);
@@ -259,22 +269,29 @@ var ApiInvoker = new function() {
 
             this.sign = function(url) {
 				var urlParts = this.splitUrl(url);
-				var sha = new jsSHA(urlParts.pathAndQuery, "ASCII");
-				var hash = sha.getHMAC(this.apiKey, "ASCII", "B64");
-				var signature = encodeURIComponent(hash);
-				return url +
-				    (urlParts.query == null || urlParts.query.length == 0 ? '?' : '&') +
-				    "signature=" + signature;
+				url = url + (urlParts.query == null || urlParts.query.length == 0 ? '?' : '&') + "clientkey=" + clientKey;
+				var signature = this.signString(url, privateKey);
+				return url + "&signature=" + signature;
             },
-		
+
+		    this.signString = function (content, privateKey) {
+				var sha = new jsSHA(content.toLowerCase(), "ASCII");
+				var hash = sha.getHMAC(privateKey, "ASCII", "B64");
+				var signature = hash.replace(/\+/g, "-").replace(/\//g, "_");
+				if(signature.substr(-1) === "="){
+				   signature = signature.substr(0, signature.length-1);
+				}
+				return signature;
+		    },
+
 		    this.splitUrl = (function () {
 		        var regex = new RegExp("(\\w+)://([^/]+)([^\?]*)([\?].+)?");
-		
+
 		        return function (url) {
 		            var matches = url.match(regex);
 		            var path = (matches.length > 3 ? matches[3] : null);
 		            var query = (matches.length > 4 ? matches[4] : null);
-		
+
 		            return {
 		                "schema": matches[1],
 		                "authority": (matches.length > 2 ? matches[2] : null),
@@ -286,3 +303,4 @@ var ApiInvoker = new function() {
 		    })()
 
 };
+

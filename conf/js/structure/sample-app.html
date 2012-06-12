@@ -2,11 +2,11 @@
 <html>
 
 <head>
-    <title>GroupDocs Javascript Lib Sandbox</title>
+    <title>Dynabic Javascript Lib Sandbox</title>
     <script src="lib/jquery-1.6.4.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="lib/jquery-ui-1.8.14.custom.min.js" type="text/javascript" charset="utf-8"></script>
     <script src="dist/common.js" type="text/javascript" charset="utf-8"></script>
-    <script src="dist/AntAPI.js" type="text/javascript" charset="utf-8"></script>
+    <script src="dist/CustomersAPI.js" type="text/javascript" charset="utf-8"></script>
 
     <script type="text/javascript" charset="utf-8">
 		function log(s) {
@@ -19,30 +19,34 @@
 			log(event);
 		}
 
-		function onAnnotationCreated(event) {
+		function onCustomerCreated(event) {
 			logResponse(event);
 
-			// delete the created annotation
-			//
+			// delete the created customer
 		}
 
-		var privateKey = "YOUR_PRIVATE_KEY";
-		var userId = "YOUR_USER_ID";
-		var fileId = "YOUR_FILE_ID";
-		var apiServer = "https://dev-api.groupdocs.com/v2.0/";
+		var privateKey = "<PASTE_HERE>";
+		var clientKey = "<PASTE_HERE>";
+		var apiServer = "http://stage-api.dynabic.com/billing/";
 
-		ApiInvoker.init(apiServer, privateKey, null, true);
+		ApiInvoker.init(apiServer, privateKey, clientKey, true);
 
-		ApiInvoker.addListener(AntAPI.event_ListAnnotations, logResponse);
-		ApiInvoker.addListener(AntAPI.event_CreateAnnotation, onAnnotationCreated);
+		ApiInvoker.addListener(CustomersAPI.event_GetCustomer, logResponse);
+		ApiInvoker.addListener(CustomersAPI.event_AddCustomer, onCustomerCreated);
 
 		// Get some data
-		AntAPI.ListAnnotations(userId, fileId, function(){
+		CustomersAPI.GetCustomer("14", function(){
 			log(response);
 		});
 
-		// Create annotation
-		// AntAPI.CreateAnnotation();
+		// Add customer
+		// var postData = new CustomerRequest();
+		// postData.first_name = "John";
+		// postData.last_name = "Doe";
+		// postData.email = "hopefullysome@nonexisting.email";
+		// CustomersAPI.AddCustomer("test", postData, function(){
+			// log(response);
+		// });
 
 	</script>
 <body>
