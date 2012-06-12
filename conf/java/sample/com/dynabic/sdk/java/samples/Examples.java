@@ -24,8 +24,8 @@ public class Examples {
 				false);
 	}
 
-	static String clientKey = "19c7a0d97d2d4413aba5";
-	static String privateKey = "19c7a0d97d2d4413aba5";
+	static String clientKey = "<PASTE_HERE>";
+	static String privateKey = "<PASTE_HERE>";
 	static String apiServer = "http://stage-api.dynabic.com/billing/";
 	static APIInvoker apiInvoker = APIInvoker
 			.initialize(new DynabicUrlSigningSecurityHandler(clientKey, privateKey),
