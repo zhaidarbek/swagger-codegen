@@ -2,54 +2,54 @@
     "resources" : [
 	    {
 	        "id" : 1,
-	        "name" : "Get list of annotations",
+	        "name" : "Get customer by id",
 	        "httpMethod" : "GET",
-	        "path" : "/ant/{userId}/files/{fileId}/annotations",
-	        "suggestedMethodName" : "ListAnnotations"
+	        "path" : "/customers/byid/{customerId}.{format}",
+	        "suggestedMethodName" : "GetCustomer"
 	    },
 	    {
 	        "id" : 2,
-	        "name" : "Create annotation",
+	        "name" : "Add customer",
 	        "httpMethod" : "POST",
-	        "path" : "/ant/{userId}/files/{fileId}/annotations",
-	        "suggestedMethodName" : "CreateAnnotation"
+	        "path" : "/customers/{siteSubdomain}.{format}",
+	        "suggestedMethodName" : "AddCustomer"
 	    }
 	],
     "testSuites" : [
         	{
     	        "id" : 1,
-    	        "name" : "Test Annotation service related APIs",
+    	        "name" : "Test Customer service related APIs",
     	        "testCases" : [
                     {
-                        "name" : "List file annotations",
+                        "name" : "Get customer by id",
                         "id" : 1,
                         "resourceId" : 1,
                         "input" : {
-                            "userId":"<REPLACE>",
-                            "fileId":"<REPLACE>"
+                            "customerId":"14",
+                            "format":"json"
                         },
 		                "assertions" : [
                             {
-                                "actualOutput" : "${output(1.1).status}",
+                                "actualOutput" : "${output(1.1).id}",
                                 "condition" : "==",
-                                "expectedOutput" : "Ok"
+                                "expectedOutput" : "14"
                             }
 		                ]
                     },
                     {
-                        "name" : "Create file annotation",
+                        "name" : "Add customer",
                         "id" : 2,
                         "resourceId" : 2,
                         "input" : {
-                            "userId":"<REPLACE>",
-                            "fileId":"<REPLACE>",
-							"postData" : "${input.annotationInfoList[0]}"
+                            "siteSubdomain":"test",
+                            "postData": "${input.customerRequestList[0]}",
+							"format" : "json"
                         },
 		                "assertions" : [
                             {
-                                "actualOutput" : "${output(1.2).status}",
+                                "actualOutput" : "${output(1.2).email}",
                                 "condition" : "==",
-                                "expectedOutput" : "Ok"
+                                "expectedOutput" : "addedbyswagger@test.tool"
                             }
 		                ]
                     }

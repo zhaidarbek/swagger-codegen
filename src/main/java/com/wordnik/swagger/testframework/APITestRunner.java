@@ -19,6 +19,7 @@ package com.wordnik.swagger.testframework;
 import com.wordnik.swagger.codegen.config.common.CamelCaseNamingPolicyProvider;
 import com.wordnik.swagger.runtime.common.APIInvoker;
 import com.wordnik.swagger.runtime.common.ApiKeyAuthTokenBasedSecurityHandler;
+import com.wordnik.swagger.runtime.common.DynabicUrlSigningSecurityHandler;
 import com.wordnik.swagger.runtime.common.SecurityHandler;
 import com.wordnik.swagger.runtime.exception.APIException;
 import org.apache.commons.beanutils.MethodUtils;
@@ -90,14 +91,15 @@ public class APITestRunner {
      * Follow the following argument pattern
      *
      * Arg[0] --> api server URL
-     * Arg[1] --> api key
-     * Arg[2] --> test script file path
-     * Arg[3] --> test data file path
-     * Arg[4] --> test data class name (class to which test data file will be deserialized)
-     * Arg[5] --> package where API classes are available
-     * Arg[6] --> Language to execute test cases
-     * Arg[7] --> Library location
-     * Arg[8] --> Optional test cases id. provide this if you need to execute only one test case
+     * Arg[1] --> client key
+     * Arg[2] --> signing key
+     * Arg[3] --> test script file path
+     * Arg[4] --> test data file path
+     * Arg[5] --> test data class name (class to which test data file will be deserialized)
+     * Arg[6] --> package where API classes are available
+     * Arg[7] --> Language to execute test cases
+     * Arg[8] --> Library location
+     * Arg[9] --> Optional test cases id. provide this if you need to execute only one test case
      *
      * @param args
      * @throws Exception
@@ -110,20 +112,21 @@ public class APITestRunner {
         }
 
         String apiKey = args[1];
-        String testScriptLocation = args[2];
-        String testDataLocation = args[3];
-        String testDataClass = args[4].trim();
+        String clientKey = args[2];
+        String testScriptLocation = args[3];
+        String testDataLocation = args[4];
+        String testDataClass = args[5].trim();
         System.out.println("class"+testDataClass+"test");
-        String apiPackageName = args[5];
-        String libraryLocation = args[6];
-        String language = args[7];
+        String apiPackageName = args[6];
+        String libraryLocation = args[7];
+        String language = args[8];
 
         String suiteId = "0";
-        if(args.length > 8){
-            suiteId = args[8];
+        if(args.length > 9){
+            suiteId = args[9];
         }
 
-        ApiKeyAuthTokenBasedSecurityHandler securityHandler = new ApiKeyAuthTokenBasedSecurityHandler(apiKey, "");
+        DynabicUrlSigningSecurityHandler securityHandler = new DynabicUrlSigningSecurityHandler(clientKey, apiKey);
         APIInvoker aAPIInvoker = APIInvoker.initialize(securityHandler, apiServer, true);
 		APITestRunner runner = new APITestRunner();
         runner.initialize(testScriptLocation, testDataLocation, testDataClass);
@@ -176,7 +179,7 @@ public class APITestRunner {
      * @param testPackage
      */
     private void runTests(String apiServer, String apiPackageName, TestPackage testPackage, String language, int suiteId,
-                          String libraryPackageName, ApiKeyAuthTokenBasedSecurityHandler securityHandler,
+                          String libraryPackageName, DynabicUrlSigningSecurityHandler securityHandler,
                           String libraryLocation) throws Exception {
         /**
          * Logic:
@@ -254,7 +257,7 @@ public class APITestRunner {
 
                         //get eternal command
                         String[] externalCommand = constructExternalCommand(apiServer, apiPackageName,
-                                securityHandler.getApiKey(), authToken,
+                                securityHandler.getPrivateKey(), securityHandler.getClientKey(),
                                 resource.getPath(), resource.getHttpMethod(), resource.getSuggestedMethodName(),
                                 queryPathParameters.toString(), postData, language, libraryLocation);
                         //print the command

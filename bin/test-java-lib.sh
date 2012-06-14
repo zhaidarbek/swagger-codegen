@@ -1,5 +1,5 @@
 #!/bin/bash
-if [ $# -ne 7 ]
+if [ $# -ne 8 ]
 then
     echo "Error in $0 - Invalid Argument Count"
     echo "Syntax: $0 location_of_client_library location_of_service api_key test_script_location test_data_location test_data_class_name api_classes_package_name"

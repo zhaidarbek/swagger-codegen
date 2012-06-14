@@ -71,4 +71,12 @@ public class DynabicUrlSigningSecurityHandler implements SecurityHandler {
         return value.replaceAll("\\+", "-").replaceAll("\\/", "_");
     }
 
+	public String getClientKey() {
+		return clientKey;
+	}
+
+	public String getPrivateKey() {
+		return privateKey;
+	}
+
 }

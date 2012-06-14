@@ -77,7 +77,7 @@ public class JavaTestCaseExecutor {
         }
         queryAndPathParameters.put("authToken", authToken);
 
-        SecurityHandler securityHandler = new DynabicUrlSigningSecurityHandler("TODO", apiKey);
+        SecurityHandler securityHandler = new DynabicUrlSigningSecurityHandler(authToken, apiKey);
         APIInvoker aAPIInvoker = APIInvoker.initialize(securityHandler, apiServer, true);
 
         runner.executeTestCase(resource, servicePackageName, suggestedMethodName, queryAndPathParameters, postData);

@@ -1,18 +1,9 @@
 {
-  "annotationInfoList":[
+  "customerRequestList":[
   	{
-  		"type":"Text",
-  		"box":{
-  			"x":"200.0",
-  			"y":"200.0",
-  			"w":"200.0",
-  			"h":"200.0"
-  		},
-  		"replies":[
-  			{
-  			"text": "test message from client test framework"
-  			}
-  		]
+        "first_name":"John",
+		"last_name" : "Doe",
+		"email" : "addedbyswagger@test.tool"
   	}
   ]
 }
