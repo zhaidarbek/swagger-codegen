@@ -19,23 +19,17 @@ package com.wordnik.swagger.runtime.common;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.String;
 import java.net.URLEncoder;
-import java.util.Map;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 
-import com.wordnik.swagger.runtime.exception.APIException;
-import com.wordnik.swagger.runtime.exception.APIExceptionCodes;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.DeserializationConfig.Feature;
 import org.codehaus.jackson.map.SerializationConfig;
-import org.codehaus.jackson.type.TypeReference;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -43,6 +37,8 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.WebResource.Builder;
 import com.sun.jersey.api.client.filter.LoggingFilter;
 import com.sun.jersey.multipart.file.DefaultMediaTypePredictor;
+import com.wordnik.swagger.runtime.exception.APIException;
+import com.wordnik.swagger.runtime.exception.APIExceptionCodes;
 
 
 /**
@@ -77,12 +73,12 @@ public class APIInvoker {
 	}
 
 	/**
-	 * Initializes the API communication with required inputs. 
+	 * Initializes the API communication with required inputs.
 	 * @param securityHandler security handler responsible for populating necessary security invocation while making API server calls
-	 * @param apiServer Sets the URL for the API server. It is defaulted to the server 
-	 * 					used while building the driver. This value should be provided while testing the APIs against 
+	 * @param apiServer Sets the URL for the API server. It is defaulted to the server
+	 * 					used while building the driver. This value should be provided while testing the APIs against
 	 * 					test servers or if there is any changes in production server URLs.
-	 * @param enableLogging This will enable the logging using Jersey logging filter. Refer the following documentation 
+	 * @param enableLogging This will enable the logging using Jersey logging filter. Refer the following documentation
 	 * 						for more details. {@link com.sun.jersey.api.client.filter.LoggingFilter}. Default output is sent to system.out.
 	 * 						Create a logger ({@link java.util.logging.Logger} class and set using setLogger method.
 	 */
@@ -117,16 +113,16 @@ public class APIInvoker {
     }
 
 	/**
-	 * Set the logger instance used for Jersey logging. 
+	 * Set the logger instance used for Jersey logging.
 	 * @param aLogger
 	 */
 	public void setLogger(Logger aLogger) {
-		logger = aLogger; 
+		logger = aLogger;
 	}
-	
+
 	/**
-	 * Gets the API key used for server communication. 
-	 * This value is set using initialize method. 
+	 * Gets the API key used for server communication.
+	 * This value is set using initialize method.
 	 * @return
 	 */
 	public SecurityHandler setSecurityHandler() {
@@ -139,7 +135,7 @@ public class APIInvoker {
 
 	/**
 	 * Sets the URL for the API server. It is defaulted to the server used while building the driver.
-	 * @return 
+	 * @return
 	 */
 	private String getApiServer() {
 		return apiServer;
@@ -148,9 +144,9 @@ public class APIInvoker {
 	public void setApiServer(String server) {
 		apiServer = server;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Invokes the API and returns the response as json string.
      *
@@ -158,9 +154,9 @@ public class APIInvoker {
      * based ons ecuroty handler
 	 *
 	 * @param resourceURL - URL for the rest resource
-	 * @param method - Method we should use for communicating to the back end. 
+	 * @param method - Method we should use for communicating to the back end.
 	 * @param postData - if the method is POST, provide the object that should be sent as part of post request.
-	 * @return JSON response of the API call. 
+	 * @return JSON response of the API call.
 	 * @throws com.wordnik.swagger.runtime.exception.APIException if the call to API server fails.
 	 */
 	public String invokeAPI(String resourceURL, String method, Map<String,
@@ -205,7 +201,7 @@ public class APIInvoker {
         		contentType = DefaultMediaTypePredictor.CommonMediaTypes.getMediaTypeFromFile((File)postData);
         	}
         }
-        
+
         Builder builder = aResource.type(contentType);
         for(String key : headerMap.keySet()){
             builder.header(key, headerMap.get(key));
@@ -238,20 +234,14 @@ public class APIInvoker {
         	}
         	clientResponse =  builder.put(ClientResponse.class, requestBody);
         }else if (method.equals(DELETE)) {
-        	Object requestBody;
-        	if(isFileUpload){
-        		requestBody = postData;
-        	} else {
-        		requestBody = serialize(postData);
-        		signRequestBody(headerMap, builder, requestBody);
-        	}
-        	clientResponse =  builder.delete(ClientResponse.class, requestBody);
+        	clientResponse =  builder.delete(ClientResponse.class);
         }
-        
+
         //process the response
         if(clientResponse.getClientResponseStatus() == ClientResponse.Status.OK
         		|| clientResponse.getClientResponseStatus() == ClientResponse.Status.CREATED
-        		|| clientResponse.getClientResponseStatus() == ClientResponse.Status.ACCEPTED) {
+        		|| clientResponse.getClientResponseStatus() == ClientResponse.Status.ACCEPTED
+        		|| clientResponse.getClientResponseStatus() == ClientResponse.Status.NOT_FOUND) {
 	        String response = clientResponse.getEntity(String.class);
 			return response;
         }else{
@@ -259,7 +249,7 @@ public class APIInvoker {
         	throw new APIException(responseCode, clientResponse.getEntity(String.class));
         }
 	}
-	
+
 	private void signRequestBody(Map<String, String> headerMap, Builder builder, Object requestBody) {
 		if(securityHandler != null){
 			headerMap.clear();
@@ -269,7 +259,7 @@ public class APIInvoker {
 		    }
 		}
 	}
-	
+
 	/**
 	 * De-serialize the object from String to object of type input class name.
 	 * @param response
@@ -300,7 +290,7 @@ public class APIInvoker {
 
 
 	/**
-	 * serialize the object from String to input object. 
+	 * serialize the object from String to input object.
 	 * @param input
 	 * @return
 	 */
@@ -368,3 +358,4 @@ public class APIInvoker {
     }
 
 }
+
