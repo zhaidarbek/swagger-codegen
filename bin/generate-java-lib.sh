@@ -21,5 +21,11 @@ done
 export CLASSPATH=$(cat classpath.txt)
 export JAVA_OPTS="${JAVA_OPTS} -Dproperty=Xmx2g"
 java $WORDNIK_OPTS $JAVA_CONFIG_OPTIONS $JAVA_OPTS -cp $CLASSPATH com.wordnik.swagger.codegen.config.java.JavaLibCodeGen "$@"
-cp conf/java/sample/pom.xml $4/
+
+if [[ $1 == *Billing* || $1 == *billing* ]]
+then
+    cp conf/java/sample/billing_pom.xml $4/pom.xml
+else
+    cp conf/java/sample/platform_pom.xml $4/pom.xml
+fi
 
