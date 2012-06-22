@@ -21,3 +21,5 @@ done
 export CLASSPATH=$(cat classpath.txt)
 export JAVA_OPTS="${JAVA_OPTS} -Dproperty=Xmx2g"
 java $WORDNIK_OPTS $JAVA_CONFIG_OPTIONS $JAVA_OPTS -cp $CLASSPATH com.wordnik.swagger.codegen.config.js.JSLibCodeGen "$@"
+
+cp conf/js/structure/.project $3/

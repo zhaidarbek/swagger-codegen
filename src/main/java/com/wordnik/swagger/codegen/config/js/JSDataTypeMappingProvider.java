@@ -153,7 +153,7 @@ public class JSDataTypeMappingProvider implements DataTypeMappingProvider {
 	 */
     public String getClassType(String type, boolean primitiveObject) {
     	String classShortName = "";
-    	if(type.startsWith("List[")){
+    	if(type.startsWith("List[") || type.startsWith("List<")){
     		classShortName = type.substring(5, type.length()-1);
     		classShortName =  getObjectType(classShortName, true);
     	}else if (type.startsWith("Map[")) {
@@ -190,7 +190,7 @@ public class JSDataTypeMappingProvider implements DataTypeMappingProvider {
     		return "void";
     	}
     	String classShortName = "";
-    	if(type.startsWith("List[") || type.startsWith("Map[") || type.startsWith("Set[") || type.startsWith("Array[")){
+    	if(type.startsWith("List[") || type.startsWith("Map[") || type.startsWith("Set[") || type.startsWith("Array[") || type.startsWith("List<")){
     		classShortName = "Array";
     	}else{
     		classShortName =  getObjectType(type, true);

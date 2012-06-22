@@ -21,3 +21,6 @@ done
 export CLASSPATH=$(cat classpath.txt)
 export JAVA_OPTS="${JAVA_OPTS} -Dproperty=Xmx2g"
 java $WORDNIK_OPTS $JAVA_CONFIG_OPTIONS $JAVA_OPTS -cp $CLASSPATH com.wordnik.swagger.codegen.config.python.PythonLibCodeGen "$@"
+
+cp conf/python/structure/.project $4/
+
