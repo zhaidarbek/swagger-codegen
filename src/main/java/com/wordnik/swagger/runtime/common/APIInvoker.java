@@ -186,7 +186,7 @@ public class APIInvoker {
         if(securityHandler != null){
             securityHandler.populateSecurityInfo(resourceURLBuilder, headerMap);
         }
-        WebResource aResource = apiClient.resource(resourceURLBuilder.toString());
+        WebResource aResource = apiClient.resource(resourceURLBuilder.toString().replaceAll("\\[", "%5B").replaceAll("\\]", "%5D"));
 
 
         //set the required HTTP headers
@@ -343,7 +343,7 @@ public class APIInvoker {
 
     private static String encode(String value){
         try{
-            return URLEncoder.encode(value, "utf-8").replaceAll("\\+", "%20").replaceAll("%2F", "/");
+            return URLEncoder.encode(value, "utf-8").replaceAll("\\+", "%20").replaceAll("%2F", "/").replaceAll("%40", "@");
         }catch(UnsupportedEncodingException uee){
             throw new RuntimeException(uee.getMessage());
         }
