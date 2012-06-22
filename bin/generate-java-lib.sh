@@ -24,8 +24,8 @@ java $WORDNIK_OPTS $JAVA_CONFIG_OPTIONS $JAVA_OPTS -cp $CLASSPATH com.wordnik.sw
 
 if [[ $1 == *Billing* || $1 == *billing* ]]
 then
-    cp conf/java/sample/billing_pom.xml $4/pom.xml
+    cp -r conf/java/sample/billing/* $4/
 else
-    cp conf/java/sample/platform_pom.xml $4/pom.xml
+    cp -r conf/java/sample/platform/* $4/
 fi
 
