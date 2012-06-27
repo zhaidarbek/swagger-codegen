@@ -6,9 +6,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
 
 import com.dynabic.sdk.java.model.AddressRequest;
 import com.dynabic.sdk.java.model.AddressResponse;
@@ -77,7 +77,7 @@ public abstract class AbstractIntegrationTest {
 
 	protected TestData testData;
 
-	@BeforeMethod
+	@Before
 	public void setUpSite() throws APIException {
 		log("Setting up site...");
 
@@ -90,7 +90,7 @@ public abstract class AbstractIntegrationTest {
 		testData.subdomain = site.getSubdomain();
 	}
 
-	@AfterMethod
+	@After
 	public void tearDownSite() throws APIException{
 		log("Tearing down site...");
 
@@ -148,6 +148,7 @@ public abstract class AbstractIntegrationTest {
 		List<ProductItemResponse> items = product.getPricing_plans().get(0).getProduct_items();
 		for (ProductItemResponse item : items) {
 			SubscriptionItemRequest subscriptionItem = new SubscriptionItemRequest();
+			subscriptionItem.setSubscription_id(0);
 			subscriptionItem.setProduct_item_id(item.getId());
 			subscriptionItem.setQuantity(5d);
 			subscriptionItem.setDescription("Add new subscription");
@@ -166,7 +167,6 @@ public abstract class AbstractIntegrationTest {
 		subscription.setProduct_id(product.getId());
 		subscription.setPricing_plan_id(product.getPricing_plans().get(0).getId());
 		subscription.setStart_date(new Date());
-		subscription.setStatus("2"); // Trialing
 		subscription.setSubscription_items(subscriptionItems);
 
 		return SubscriptionsAPI.AddSubscription(testData.subdomain, subscription);
@@ -204,9 +204,38 @@ public abstract class AbstractIntegrationTest {
 		meteredPrice.setId(0);
 		meteredPrice.setStart_quantity(1d);
 		meteredPrice.setUnit_price(10d);
+		meteredPrice.setEnd_quantity(7d);
 		meteredPriceList.add(meteredPrice);
 
 		productItem = newProductItemRequest("test product item 2", "0");
+		productItem.setMetered_prices(meteredPriceList);
+		pricingPlan.getProduct_items().add(productItem);
+
+		return ProductsAPI.AddProduct(product);
+	}
+
+	public ProductResponse addSecondProductToFamily(int familyId) throws APIException {
+		ProductRequest product = newProduct(familyId);
+		product.setId(0);
+		product.setApi_reference1("api ref test");
+		product.setName("new name");
+		PricingPlanRequest pricingPlan = newPricingPlanRequest();
+		pricingPlan.setName("new test pricing plan");
+		product.getPricing_plans().add(pricingPlan);
+
+		ProductPricingPlanPaymentScheduleRequest paymentSchedule = newProductPricingPlanPaymentScheduleRequest();
+		paymentSchedule.setName("new pricing plan schedule");
+		pricingPlan.getPricing_plan_payment_schedules().add(paymentSchedule);
+
+		List<ProductMeteredPriceRequest> meteredPriceList = new ArrayList<ProductMeteredPriceRequest>();
+		ProductMeteredPriceRequest meteredPrice = new ProductMeteredPriceRequest();
+		meteredPrice.setId(0);
+		meteredPrice.setStart_quantity(1d);
+		meteredPrice.setUnit_price(3d);
+		meteredPrice.setEnd_quantity(8d);
+		meteredPriceList.add(meteredPrice);
+
+		ProductItemRequest productItem = newProductItemRequest("test unique product item 1", "2");
 		productItem.setMetered_prices(meteredPriceList);
 		pricingPlan.getProduct_items().add(productItem);
 
@@ -219,11 +248,9 @@ public abstract class AbstractIntegrationTest {
 		productItem.setName(itemName);
 		productItem.setItem_type(itemType);
 		productItem.setIs_visible_on_hosted_page(true);
-
-//		productItem.setDescription("");
+		productItem.setUnit_name("unit name");
 		productItem.setProduct_item_children(null);
 		productItem.setId(0);
-		// setId=0
 
 		return productItem;
 	}

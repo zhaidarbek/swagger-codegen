@@ -2,9 +2,9 @@ package com.dynabic.sdk.java.platform.api;
 
 import java.text.SimpleDateFormat;
 
-import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
 
 import com.dynabic.sdk.java.platform.model.SiteRequest;
 import com.dynabic.sdk.java.platform.model.SiteResponse;
@@ -44,29 +44,34 @@ public abstract class AbstractIntegrationTest {
 	}
 
 	protected TestData testData;
+	protected boolean runSetup = true;
 
-	@BeforeMethod
+	@Before
 	public void setUpSite() throws APIException {
-		log("Setting up site...");
+		if(runSetup){
+			log("Setting up site... " + Thread.currentThread().getName());
 
-		SiteResponse site = addSite();
-		Assert.assertNotNull(site);
-		Assert.assertNotNull(site.getId());
-		Assert.assertNotNull(site.getName());
-		Assert.assertNotNull(site.getSubdomain());
-		testData = new TestData();
-		testData.siteId = site.getId();
-		testData.siteName = site.getName();
-		testData.subdomain = site.getSubdomain();
+			SiteResponse site = addSite();
+			Assert.assertNotNull(site);
+			Assert.assertNotNull(site.getId());
+			Assert.assertNotNull(site.getName());
+			Assert.assertNotNull(site.getSubdomain());
+			testData = new TestData();
+			testData.siteId = site.getId();
+			testData.siteName = site.getName();
+			testData.subdomain = site.getSubdomain();
+		}
 	}
 
-	@AfterMethod
+	@After
 	public void tearDownSite() {
-		log("Tearing down site...");
-		try {
-			SitesAPI.DeleteSite(testData.siteId.toString());
-		} catch (APIException ignore) {
-			// already deleted
+		if(runSetup){
+			log("Tearing down site...");
+			try {
+				SitesAPI.DeleteSite(testData.siteId.toString());
+			} catch (APIException ignore) {
+				// already deleted
+			}
 		}
 	}
 
