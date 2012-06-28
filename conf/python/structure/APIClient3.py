@@ -95,9 +95,9 @@ class APIClient3:
             string -- json serialization of object
         """
         if type(obj) == list:
-            return urllib.parse.quote(','.join(obj)).replace("%2F", "/")
+            return urllib.parse.quote(','.join(obj)).replace("%2F", "/").replace("%40", "@")
         else:
-            return urllib.parse.quote(obj).replace("%2F", "/")
+            return urllib.parse.quote(obj).replace("%2F", "/").replace("%40", "@")
 
     def deserialize(self, obj, objClass):
         """Derialize a JSON string into an object.
