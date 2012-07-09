@@ -6,12 +6,15 @@ classpath.txt
 version.properties
 .project
 .classpath
-lib/
-build/
-generated-files*/
-.settings/
-target/
+.settings/*
+lib/*
+build/*
+generated-files/*
 *.swp
 *.swo
-.cache
+/*.cache
+
+/target
+/generated-files
+/nbactions.xml
 
