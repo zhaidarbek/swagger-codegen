@@ -78,10 +78,14 @@ namespace $packageName$
       }
   }$
   $method.pathParameters:{ argument |
-      if ($argument.name$ != null)
-      {
-        resourcePath = resourcePath.Replace("{$argument.name$}", ToPathValue($argument.name$));
-      }
+    if ($argument.name$ != null)
+    {
+      resourcePath = resourcePath.Replace("{$argument.name$}", ToPathValue($argument.name$));
+    }
+    else 
+    {
+      resourcePath = resourcePath.Replace("{$argument.name$}", "");
+    }
   }$
   $method.headerParameters:{ argument |
       if ($argument.name$ != null)
@@ -102,6 +106,10 @@ namespace $packageName$
     if ($argument.inputModelClassArgument$ != null && $argument.methodNameFromModelClass$ != null)
     {
       resourcePath = resourcePath.Replace("{$argument.name$}", ToPathValue($argument.methodNameFromModelClass$));
+    }
+    else 
+    {
+      resourcePath = resourcePath.Replace("{$argument.name$}", "");
     }
   }$
   $method.headerParameters:{ argument |

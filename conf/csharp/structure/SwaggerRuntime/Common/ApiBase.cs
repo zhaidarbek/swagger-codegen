@@ -65,7 +65,7 @@ namespace SwaggerRuntime.Common
 
       var headers = new Dictionary<string, string>();
 
-      _securityHandler.PopulateSecurityInfo(absoluteResourceUrl, headers);
+      absoluteResourceUrl = _securityHandler.PopulateSecurityInfo(absoluteResourceUrl, headers);
 
       var request = (HttpWebRequest)WebRequest.Create(absoluteResourceUrl);
       
@@ -84,6 +84,40 @@ namespace SwaggerRuntime.Common
         }
       }
 
+      if (postData != null)
+      {
+          string contentType;
+          string requestBody;
+          if (postData is string)
+          {
+              contentType = "application/x-www-form-urlencoded";
+              requestBody = (string)postData;
+          }
+          else
+          {
+              contentType = "application/json";
+              requestBody = Serialize(postData);
+          }
+          byte[] byteArray = Encoding.UTF8.GetBytes(requestBody);
+          request.ContentType = contentType;
+          request.ContentLength = byteArray.Length;
+
+          // sign request body if needed
+          _securityHandler.PopulateSecurityInfo(requestBody, headers);
+          foreach (KeyValuePair<string, string> headerKvp in headers)
+          {
+              request.Headers[headerKvp.Key] = headerKvp.Value;
+          }
+
+          Stream dataStream = request.GetRequestStream();
+          dataStream.Write(byteArray, 0, byteArray.Length);
+          dataStream.Close();
+      }
+      else
+      {
+          request.ContentType = "text/html";
+      }
+
       using (var response = (HttpWebResponse)request.GetResponse())
       using (Stream responseStream = response.GetResponseStream())
       {
@@ -92,7 +126,8 @@ namespace SwaggerRuntime.Common
           throw new IOException("Couldn't get response stream.");
         }
 
-        if (response.StatusCode != HttpStatusCode.OK)
+        if (response.StatusCode != HttpStatusCode.OK && response.StatusCode != HttpStatusCode.Created
+            && response.StatusCode != HttpStatusCode.Accepted && response.StatusCode != HttpStatusCode.NotFound)
         {
           throw new ApiException((int)response.StatusCode);
         }

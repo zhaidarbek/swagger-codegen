@@ -35,9 +35,10 @@ namespace SwaggerRuntime.Common
 
     #region ISecurityHandler members
 
-    public void PopulateSecurityInfo(string resourceURL, IDictionary<string, string> httpHeaders)
+    public string PopulateSecurityInfo(string resourceURL, IDictionary<string, string> httpHeaders)
     {
       httpHeaders.Add("api_key", _apiKey);
+      return resourceURL;
     }
 
     #endregion

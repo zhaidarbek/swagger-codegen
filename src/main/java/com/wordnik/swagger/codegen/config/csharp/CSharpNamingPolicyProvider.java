@@ -88,14 +88,14 @@ public class CSharpNamingPolicyProvider implements NamingPolicyProvider {
   @Override
   public String getServiceName(String resourcePath) {
     String className = null;
-    int index = resourcePath.indexOf(".");
-    
-    if (index >= 0) {
-      String resourceName = resourcePath.substring(1, index);
-      
-      className = applyClassNamingPolicy(resourceName);
-    }
-    else {
+//    int index = resourcePath.indexOf(".");
+//    
+//    if (index >= 0) {
+//      String resourceName = resourcePath.substring(1, index);
+//      
+//      className = applyClassNamingPolicy(resourceName);
+//    }
+//    else {
       String[] paths = resourcePath.split("/");
       
       for (String path : paths) {
@@ -104,7 +104,7 @@ public class CSharpNamingPolicyProvider implements NamingPolicyProvider {
           break;
         }
       }
-    }
+//    }
     
     return className + "Api";
   }
