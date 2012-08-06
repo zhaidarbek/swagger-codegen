@@ -56,7 +56,7 @@ class APIClient {
 
 		} else if (is_string($postData) && strpos($postData, "file://") === 0) {
 			$filename = substr($postData, 7);
-			$headers[] = "Content-type: ".mime_content_type($filename);
+			$headers[] = "Content-type: ".self::getMimeType($filename);
 			$headers[] = "Content-Length: ".filesize($filename);
 
 		} else if (is_object($postData) or is_array($postData)) {
@@ -66,7 +66,7 @@ class APIClient {
                         print "\n\r";
 		}
 
-        # Allow API key from $headerParams to override default
+        // Allow API key from $headerParams to override default
         $added_api_key = False;
 		if ($headerParams != null) {
 			foreach ($headerParams as $key => $val) {
@@ -137,7 +137,17 @@ class APIClient {
 		return $data;
 	}
 
-
+	public static function getMimeType($filename){
+		$cont_type = null;
+		if (function_exists('finfo_file')) {
+	        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+	        $cont_type = finfo_file($finfo, $filename);
+	        finfo_close($finfo);
+	    } else {
+	        $cont_type = mime_content_type($filename);
+	    }
+		return $cont_type;
+	}
 
 	/**
 	 * Take value and turn it into a string suitable for inclusion in
@@ -242,3 +252,4 @@ class APIClient {
 
 
 ?>
+
