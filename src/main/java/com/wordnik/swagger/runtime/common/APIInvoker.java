@@ -190,7 +190,7 @@ public class APIInvoker {
         if(securityHandler != null){
             securityHandler.populateSecurityInfo(resourceURLBuilder, headerMap);
         }
-        WebResource aResource = apiClient.resource(resourceURLBuilder.toString());
+        WebResource aResource = apiClient.resource(encodeURI(resourceURLBuilder.toString()));
 
 
         //set the required HTTP headers
@@ -296,7 +296,7 @@ public class APIInvoker {
      */
     public static String toPathValue(String value) {
         value = (value == null) ? "" : value;
-        return encode(value);
+        return encodeURIComponent(value);
     }
 
     /**
@@ -315,16 +315,28 @@ public class APIInvoker {
         if(out.indexOf(",") != -1) {
             output = out.substring(0, out.lastIndexOf(",") );
         }
-        return encode(output);
+        return encodeURIComponent(output);
     }
 
-    private static String encode(String value){
-        try{
-            return URLEncoder.encode(value, "utf-8").replaceAll("\\+", "%20").replaceAll("%2F", "/");
-        }catch(UnsupportedEncodingException uee){
-            throw new RuntimeException(uee.getMessage());
-        }
-    }
+	public static String encodeURI(String uri) {
+		return encodeURIComponent(uri).replaceAll("\\%3B", ";")
+				.replaceAll("\\%2C", ",").replaceAll("\\%2F", "/")
+				.replaceAll("\\%3F", "?").replaceAll("\\%3A", ":")
+				.replaceAll("\\%40", "@").replaceAll("\\%26", "&")
+				.replaceAll("\\%3D", "=").replaceAll("\\%2B", "+")
+				.replaceAll("\\%24", "$");
+	}
+
+	public static String encodeURIComponent(String str) {
+		try {
+			return URLEncoder.encode(str, "UTF-8").replaceAll("\\+", "%20")
+					.replaceAll("\\%21", "!").replaceAll("\\%27", "'")
+					.replaceAll("\\%28", "(").replaceAll("\\%29", ")")
+					.replaceAll("\\%7E", "~");
+		} catch (UnsupportedEncodingException e) {
+			return str;
+		}
+	}
 
     public boolean isLoggingEnable() {
         return loggingEnabled;

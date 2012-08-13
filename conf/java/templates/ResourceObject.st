@@ -73,39 +73,37 @@ $endif$
 $if(!method.inputModel)$
 $method.queryParameters:{ argument |
 		if( $argument.name$ != null) {
-		 	queryParams.put("$argument.name$", APIInvoker.toPathValue($argument.name$));
+		 	queryParams.put("$argument.name$", $argument.name$);
 		}
 }$
 $method.pathParameters:{ argument |
 		if( $argument.name$ != null) {
-			resourcePath = resourcePath.replace("{$argument.name$}", APIInvoker.toPathValue($argument.name$));
+			resourcePath = resourcePath.replace("{$argument.name$}", $argument.name$);
 		}
 }$
 $method.headerParameters:{ argument |
 		if( $argument.name$ != null) {
-		 	headerParams.put("$argument.name$", APIInvoker.toPathValue($argument.name$));
+		 	headerParams.put("$argument.name$", $argument.name$);
 		}
 }$
-
 $endif$
 $if(method.inputModel)$
 $method.queryParameters:{ argument |
 		if( $argument.inputModelClassArgument$ != null && $argument.methodNameFromModelClass$ != null) {
-		 	queryParams.put("$argument.name$", APIInvoker.toPathValue($argument.methodNameFromModelClass$));
+		 	queryParams.put("$argument.name$", $argument.methodNameFromModelClass$);
 		}
 }$
 $method.pathParameters:{ argument |
 		if( $argument.inputModelClassArgument$ != null && $argument.methodNameFromModelClass$ != null) {
-		 	resourcePath = resourcePath.replace("{$argument.name$}", APIInvoker.toPathValue($argument.methodNameFromModelClass$));
+		 	resourcePath = resourcePath.replace("{$argument.name$}", $argument.methodNameFromModelClass$);
 		}
 }$
 $method.headerParameters:{ argument |
 		if( $argument.inputModelClassArgument$ != null && $argument.methodNameFromModelClass$ != null) {
-		 	headerParams.put("$argument.name$", APIInvoker.toPathValue($argument.methodNameFromModelClass$));
+		 	headerParams.put("$argument.name$", $argument.methodNameFromModelClass$);
 		}
 }$
 $endif$
-        resourcePath = resourcePath.replaceAll("\\\\{\\\w*\\\\}", "");
 
 		//make the API Call
 $if(method.postObject)$
