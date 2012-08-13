@@ -10,7 +10,7 @@
  *
  * @param string $className the class to attempt to load
  */
-function __autoload($className) {
+function groupDocs_autoloader($className) {
 	$currentDir = substr(__FILE__, 0, strrpos(__FILE__, '/'));
 	if (file_exists($currentDir . '/' . $className . '.php')) {
 		include $currentDir . '/' . $className . '.php';
@@ -18,7 +18,7 @@ function __autoload($className) {
 		include $currentDir . '/../model/' . $className . '.php';
 	}
 }
-
+spl_autoload_register('groupDocs_autoloader');
 
 class APIClient {
 
@@ -112,8 +112,8 @@ class APIClient {
 
 		// Make the request
 		$response = curl_exec($curl);
-		print $response;
-		print "\n\r";
+		//~ print $response;
+		//~ print "\n\r";
 
 		$response_info = curl_getinfo($curl);
 
