@@ -108,7 +108,7 @@ class APIClient {
 			throw new Exception('Method ' . $method . ' is not recognized.');
 		}
 
-		curl_setopt($curl, CURLOPT_URL, self::sign($url));
+		curl_setopt($curl, CURLOPT_URL, self::encodeURI(self::sign($url)));
 
 		// Make the request
 		$response = curl_exec($curl);
@@ -222,32 +222,55 @@ class APIClient {
 		return $instance;
 	}
 
-        public static function object_to_array($data) {
-            if (is_array($data) || is_object($data))
-            {
-                $result = array();
-                foreach ($data as $key => $value)
-                {
-                    if(!is_null($value)){
-                        $result[$key] = self::object_to_array($value);
-                    }
-                }
-                return $result;
-            }
-            return $data;
-        }
+	public static function object_to_array($data) {
+	    if (is_array($data) || is_object($data))
+	    {
+	        $result = array();
+	        foreach ($data as $key => $value)
+	        {
+	            if(!is_null($value)){
+	                $result[$key] = self::object_to_array($value);
+	            }
+	        }
+	        return $result;
+	    }
+	    return $data;
+	}
 
 	public function sign($url) {
 		$urlParts = parse_url($url);
 		$pathAndQuery = $urlParts['path'].(empty($urlParts['query']) ? "" : "?".$urlParts['query']);
-		$signature = base64_encode(hash_hmac("sha1", $pathAndQuery, $this->privateKey, true));
+		$signature = base64_encode(hash_hmac("sha1", self::encodeURI($pathAndQuery), $this->privateKey, true));
 		if(substr($signature, -1) == '='){
 			$signature = substr($signature, 0, - 1);
 		}
-		$url = $url . (empty($urlParts['query']) ? '?' : '&') . 'signature=' . rawurlencode($signature);
+		$url = $url . (empty($urlParts['query']) ? '?' : '&') . 'signature=' . $signature;
 		return $url;
 	}
 
+	public static function encodeURI($url) {
+	    $reserved = array(
+	        '%2D'=>'-','%5F'=>'_','%2E'=>'.','%21'=>'!', 
+	        '%2A'=>'*', '%27'=>"'", '%28'=>'(', '%29'=>')'
+	    );
+	    $unescaped = array(
+	        '%3B'=>';','%2C'=>',','%2F'=>'/','%3F'=>'?','%3A'=>':',
+	        '%40'=>'@','%26'=>'&','%3D'=>'=',
+	        //'%2B'=>'+',
+	        '%24'=>'$'
+	    );
+	    $score = array(
+	        '%23'=>'#'
+	    );
+	    return strtr(rawurlencode($url), array_merge($reserved,$unescaped,$score));
+
+	}
+	
+	public static function encodeURIComponent($str) {
+	    $revert = array('%21'=>'!', '%2A'=>'*', '%27'=>"'", '%28'=>'(', '%29'=>')');
+	    return strtr(rawurlencode($str), $revert);
+	}
+	
 }
 
 

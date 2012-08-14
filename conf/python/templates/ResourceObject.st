@@ -55,31 +55,31 @@ $methods:{ method |
 
 $if(!method.inputModel)$
 $method.queryParameters:{ argument |
-        queryParams['$argument.name$'] = self.apiClient.toPathValue($argument.name$)
+        queryParams['$argument.name$'] = $argument.name$
 }$
 
 $method.pathParameters:{ argument |
         if $argument.name$ != None:
-            resourcePath = resourcePath.replace('{$argument.name$}', self.apiClient.toPathValue($argument.name$))
+            resourcePath = resourcePath.replace('{$argument.name$}', $argument.name$)
 }$
 $method.headerParameters:{ argument |
         if $argument.name$ != None:
-		    headerParams['$argument.name$'] = self.apiClient.toPathValue($argument.name$)
+		    headerParams['$argument.name$'] = $argument.name$
 }$
 $endif$
 $if(method.inputModel)$
 $method.queryParameters:{ argument |
         if $argument.inputModelClassArgument$ != None and $argument.inputModelClassArgument$.$argument.name$ != None:
-            queryParams['$argument.name$'] = self.apiClient.toPathValue($argument.inputModelClassArgument$.$argument.name$)
+            queryParams['$argument.name$'] = $argument.inputModelClassArgument$.$argument.name$
 
 }$
 $method.pathParameters:{ argument |
         if $argument.inputModelClassArgument$ != None and $argument.inputModelClassArgument$.$argument.name$ != None:
-            resourcePath = resourcePath.replace('{$argument.name$}', self.apiClient.toPathValue($argument.inputModelClassArgument$.$argument.name$))
+            resourcePath = resourcePath.replace('{$argument.name$}', $argument.inputModelClassArgument$.$argument.name$)
 }$
 $method.headerParameters:{ argument |
         if $argument.inputModelClassArgument$ != None and $argument.inputModelClassArgument$.$argument.name$ != None:
-			headerParams['$argument.name$'] = self.apiClient.toPathValue($argument.inputModelClassArgument$.$argument.name$)
+			headerParams['$argument.name$'] = $argument.inputModelClassArgument$.$argument.name$
 }$
 
 $endif$

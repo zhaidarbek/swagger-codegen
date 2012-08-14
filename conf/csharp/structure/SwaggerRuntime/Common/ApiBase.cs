@@ -59,7 +59,7 @@ namespace SwaggerRuntime.Common
           absoluteResourceUrl += isFirst ? "?" : "&";
           isFirst = false;
 
-          absoluteResourceUrl += queryParamName + "=" + EncodeUrl(queryParams[queryParamName]);
+          absoluteResourceUrl += queryParamName + "=" + queryParams[queryParamName];
         }
       }
 
@@ -67,7 +67,7 @@ namespace SwaggerRuntime.Common
 
       absoluteResourceUrl = _securityHandler.PopulateSecurityInfo(absoluteResourceUrl, headers);
 
-      var request = (HttpWebRequest)WebRequest.Create(absoluteResourceUrl);
+      var request = (HttpWebRequest)WebRequest.Create(EncodeUrl(absoluteResourceUrl));
       
       request.Method = method;
 
@@ -164,7 +164,7 @@ namespace SwaggerRuntime.Common
 
     protected string ToPathValue(string value)
     {
-      return EncodeUrl(value ?? "");
+      return value ?? "";
     }
 
     protected string ToPathValue(IEnumerable<object> objects)
@@ -184,12 +184,12 @@ namespace SwaggerRuntime.Common
         output = output.Substring(0, output.LastIndexOf(","));
       }
 
-      return EncodeUrl(output);
+      return output;
     }
 
     protected string EncodeUrl(string value)
     {
-      return HttpUtility.UrlEncode(value);
+      return Uri.EscapeDataString(value);
     }
   }
 }

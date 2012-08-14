@@ -56,7 +56,7 @@ class APIClient3:
                     if value != None:
                         sentQueryParams[param] = value
                 url = url + '?' + urllib.parse.urlencode(sentQueryParams)
-            request = urllib.request.Request(url=self.sign(url), headers=headers)
+            request = urllib.request.Request(url=self.encodeURI(self.sign(url)), headers=headers)
         elif method in ['POST', 'PUT', 'DELETE']:
             data = postData
             if filename:
@@ -64,7 +64,7 @@ class APIClient3:
             elif data and type(postData) not in [str, int, float, bool]:
                 data = json.dumps(self.serialize(postData))
                 print(data)
-            request = urllib.request.Request(url=self.sign(url), headers=headers, data=data)
+            request = urllib.request.Request(url=self.encodeURI(self.sign(url)), headers=headers, data=data)
             if method in ['PUT', 'DELETE']:
                 # Monkey patch alert! Urllib2 doesn't really do PUT / DELETE
                 request.get_method = lambda: method
@@ -176,11 +176,16 @@ class APIClient3:
 
     def sign(self, url):
         urlParts = urllib.parse.urlparse(url)
-        pathAndQuery = (urlParts.path + ('?' + urlParts.query if urlParts.query else urlParts.query)).replace(" ", "%20")
-        signed = hmac.new(self.privateKey.encode('utf-8'), pathAndQuery.encode('utf-8'), sha1)
+        pathAndQuery = urlParts.path + ('?' + urlParts.query if urlParts.query else urlParts.query)
+        signed = hmac.new(self.privateKey.encode('utf-8'), self.encodeURI(pathAndQuery).encode('utf-8'), sha1)
         signature = b64encode(signed.digest()).decode('utf-8')
         if signature.endswith("="):
             signature = signature[0 : (len(signature) - 1)]
-        url = url + ('&' if urlParts.query else '?') + "signature=" + urllib.parse.quote(signature)
+        url = url + ('&' if urlParts.query else '?') + "signature=" + signature
         return url
 
+    def encodeURI(self, url):
+    	return urllib.parse.quote(url, safe='~@#$&()*!=:;,.?/\'')
+
+    def encodeURIComponent(self, url):
+    	return urllib.parse.quote(str, safe='~()*!.\'')

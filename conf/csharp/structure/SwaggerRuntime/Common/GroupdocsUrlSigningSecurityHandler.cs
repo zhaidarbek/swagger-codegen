@@ -68,7 +68,7 @@ namespace SwaggerRuntime.Common
         {
             separator = '&';
         }
-        return url + string.Format("{0}{1}={2}", separator, SIGNATURE_PARAM, SignString(new Uri(url).PathAndQuery, signingKey));
+        return url + string.Format("{0}{1}={2}", separator, SIGNATURE_PARAM, SignString(Uri.EscapeDataString(new Uri(url).PathAndQuery), signingKey));
     }
 
     #region ISecurityHandler members
