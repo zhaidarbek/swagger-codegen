@@ -64,7 +64,7 @@ namespace $packageName$
       // parse inputs
       string resourcePath = "$method.resourcePath$";
       
-      resourcePath = resourcePath.Replace("{format}","json");
+      resourcePath = resourcePath.Replace("{format}","json").Replace("*","");
       
       string method = "$method.methodType$";
       
@@ -81,6 +81,10 @@ namespace $packageName$
       if ($argument.name$ != null)
       {
         resourcePath = resourcePath.Replace("{$argument.name$}", ToPathValue($argument.name$));
+      }
+      else 
+      {
+        resourcePath = resourcePath.Replace("{$argument.name$}", "");
       }
   }$
   $method.headerParameters:{ argument |
@@ -102,6 +106,10 @@ namespace $packageName$
     if ($argument.inputModelClassArgument$ != null && $argument.methodNameFromModelClass$ != null)
     {
       resourcePath = resourcePath.Replace("{$argument.name$}", ToPathValue($argument.methodNameFromModelClass$));
+    }
+    else 
+    {
+      resourcePath = resourcePath.Replace("{$argument.name$}", "");
     }
   }$
   $method.headerParameters:{ argument |

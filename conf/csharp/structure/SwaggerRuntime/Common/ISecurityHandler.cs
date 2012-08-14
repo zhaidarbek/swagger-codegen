@@ -38,6 +38,6 @@ namespace SwaggerRuntime.Common
     /// </summary>
     /// <param name="resourceURL"></param>
     /// <param name="httpHeaders"></param>
-    void PopulateSecurityInfo(string resourceURL, IDictionary<string, string> httpHeaders);
+    string PopulateSecurityInfo(string resourceURL, IDictionary<string, string> httpHeaders);
   }
 }
