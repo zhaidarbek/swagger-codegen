@@ -30,7 +30,7 @@ public class GroupDocsUrlSigningSecurityHandler implements SecurityHandler {
 				pathAndQuery = pathAndQuery + " ";
 			}
 			String signature = sign(APIInvoker.encodeURI(pathAndQuery));
-			resourceURL.append((url.getQuery() == null ? "?" : "&")).append("signature=").append(signature);
+			resourceURL.append((url.getQuery() == null ? "?" : "&")).append("signature=").append(APIInvoker.encodeURIComponent(signature));
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}

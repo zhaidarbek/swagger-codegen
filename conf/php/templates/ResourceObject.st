@@ -54,34 +54,34 @@ $if(!method.responseVoid)$
     
 $if(!method.inputModel)$		
 $method.queryParameters:{ argument |
-    if(\$$argument.name$ != null) {
+    if(\$$argument.name$ !== null) {
 		\$queryParams['$argument.name$'] = \$$argument.name$;
 	}
 }$
 $method.pathParameters:{ argument |
-		if(\$$argument.name$ != null) {
+		if(\$$argument.name$ !== null) {
 			\$resourcePath = str_replace("{$argument.name$}", \$$argument.name$, \$resourcePath);
 		}
 }$
 $method.headerParameters:{ argument |
-		if(\$$argument.name$ != null) {
+		if(\$$argument.name$ !== null) {
 		 	\$headerParams['$argument.name$'] = \$$argument.name$;
 		}
 }$
 $endif$	
 $if(method.inputModel)$		
 $method.queryParameters:{ argument |
-		if(\$$argument.inputModelClassArgument$ != null && \$$argument.inputModelClassArgument$->$argument.name$ != null) {
+		if(\$$argument.inputModelClassArgument$ !== null && \$$argument.inputModelClassArgument$->$argument.name$ !== null) {
 		 	\$queryParams["$argument.name$"] = \$$argument.inputModelClassArgument$->$argument.name$;
 		}
 }$
 $method.pathParameters:{ argument |
-		if(\$$argument.inputModelClassArgument$ != null && \$$argument.inputModelClassArgument$->$argument.name$ != null) {
+		if(\$$argument.inputModelClassArgument$ !== null && \$$argument.inputModelClassArgument$->$argument.name$ !== null) {
 		 	\$resourcePath = str_replace("{$argument.name$}", \$$argument.inputModelClassArgument$->$argument.name$, \$resourcePath);	
 		}
 }$
 $method.headerParameters:{ argument |
-		if(\$$argument.inputModelClassArgument$ != null && \$$argument.inputModelClassArgument$->$argument.name$ != null) {
+		if(\$$argument.inputModelClassArgument$ !== null && \$$argument.inputModelClassArgument$->$argument.name$ !== null) {
 		 	\$headerParams['$argument.name$'] = \$$argument.inputModelClassArgument$->$argument.name$;
 		}
 }$

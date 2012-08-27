@@ -78,7 +78,7 @@ class APIClient {
 
 		$curl = curl_init();
 		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($curl, CURLOPT_TIMEOUT, 5);
+		curl_setopt($curl, CURLOPT_TIMEOUT, 0);
 		// return the result on success, rather than just TRUE
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
@@ -244,7 +244,7 @@ class APIClient {
 		if(substr($signature, -1) == '='){
 			$signature = substr($signature, 0, - 1);
 		}
-		$url = $url . (empty($urlParts['query']) ? '?' : '&') . 'signature=' . $signature;
+		$url = $url . (empty($urlParts['query']) ? '?' : '&') . 'signature=' . self::encodeURIComponent($signature);
 		return $url;
 	}
 
@@ -257,7 +257,7 @@ class APIClient {
 	        '%3B'=>';','%2C'=>',','%2F'=>'/','%3F'=>'?','%3A'=>':',
 	        '%40'=>'@','%26'=>'&','%3D'=>'=',
 	        //'%2B'=>'+',
-	        '%24'=>'$'
+	        '%24'=>'$', '%25'=>'%'
 	    );
 	    $score = array(
 	        '%23'=>'#'

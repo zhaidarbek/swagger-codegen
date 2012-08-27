@@ -67,7 +67,6 @@ class APIClient:
                 data = open(filename, "rb")
             elif data and type(postData) not in [str, int, float, bool]:
                 data = json.dumps(self.serialize(postData))
-                print(data)
 
             request = urllib2.Request(url=self.encodeURI(self.sign(url)), headers=headers, data=data)
             if method in ['PUT', 'DELETE']:
@@ -82,7 +81,6 @@ class APIClient:
 
         try:
             data = json.loads(response)
-            print data
         except ValueError: # PUT requests don't return anything
             data = None
 
@@ -98,7 +96,6 @@ class APIClient:
         if type(obj) == list:
             return urllib.quote(','.join(obj))
         else:
-            print obj
             return urllib.quote(obj)
 
     def deserialize(self, obj, objClass):
@@ -186,12 +183,12 @@ class APIClient:
         signature = b64encode(signed.digest()).decode('utf-8')
         if signature.endswith("="):
             signature = signature[0 : (len(signature) - 1)]
-        url = url + ('&' if urlParts.query else '?') + "signature=" + signature
-        print(url)
+        url = url + ('&' if urlParts.query else '?') + "signature=" + self.encodeURIComponent(signature)
         return url
 
     def encodeURI(self, url):
-    	return urllib.quote(url, safe='~@#$&()*!=:;,.?/\'')
+        encoded = urllib.quote(url, safe='~@#$&()*!=:;,.?/\'').replace("%25", "%")
+        return encoded
 
     def encodeURIComponent(self, url):
-    	return urllib.quote(str, safe='~()*!.\'')
+        return urllib.quote(url, safe='~()*!.\'')

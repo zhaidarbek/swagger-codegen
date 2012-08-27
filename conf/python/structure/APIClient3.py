@@ -63,7 +63,6 @@ class APIClient3:
                 data = open(filename, "rb")
             elif data and type(postData) not in [str, int, float, bool]:
                 data = json.dumps(self.serialize(postData))
-                print(data)
             request = urllib.request.Request(url=self.encodeURI(self.sign(url)), headers=headers, data=data)
             if method in ['PUT', 'DELETE']:
                 # Monkey patch alert! Urllib2 doesn't really do PUT / DELETE
@@ -77,7 +76,6 @@ class APIClient3:
 
         try:
             responseStr = response.decode('utf-8')
-            print(responseStr)
             data = json.loads(responseStr)
         except ValueError: # PUT requests don't return anything
             data = None
@@ -181,11 +179,12 @@ class APIClient3:
         signature = b64encode(signed.digest()).decode('utf-8')
         if signature.endswith("="):
             signature = signature[0 : (len(signature) - 1)]
-        url = url + ('&' if urlParts.query else '?') + "signature=" + signature
+        url = url + ('&' if urlParts.query else '?') + "signature=" + self.encodeURIComponent(signature)
         return url
 
     def encodeURI(self, url):
-    	return urllib.parse.quote(url, safe='~@#$&()*!=:;,.?/\'')
+        encoded = urllib.parse.quote(url, safe='~@#$&()*!=:;,.?/\'').replace("%25", "%")
+        return encoded
 
     def encodeURIComponent(self, url):
-    	return urllib.parse.quote(str, safe='~()*!.\'')
+        return urllib.parse.quote(url, safe='~()*!.\'')
