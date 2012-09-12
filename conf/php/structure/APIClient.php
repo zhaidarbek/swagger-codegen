@@ -11,11 +11,11 @@
  * @param string $className the class to attempt to load
  */
 function groupDocs_autoloader($className) {
-	$currentDir = substr(__FILE__, 0, strrpos(__FILE__, '/'));
-	if (file_exists($currentDir . '/' . $className . '.php')) {
-		include $currentDir . '/' . $className . '.php';
-	} elseif (file_exists($currentDir . '/../model/' . $className . '.php')) {
-		include $currentDir . '/../model/' . $className . '.php';
+	$currentDir = substr(__FILE__, 0, strrpos(__FILE__, DIRECTORY_SEPARATOR));
+	if (file_exists($currentDir . DIRECTORY_SEPARATOR . $className . '.php')) {
+		include $currentDir . DIRECTORY_SEPARATOR . $className . '.php';
+	} elseif (file_exists($currentDir . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'model' . DIRECTORY_SEPARATOR . $className . '.php')) {
+		include $currentDir . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'model'. DIRECTORY_SEPARATOR . $className . '.php';
 	}
 }
 spl_autoload_register('groupDocs_autoloader');
